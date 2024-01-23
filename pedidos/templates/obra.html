@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+
+<main class="container py-5">
+    <ul class="list-group list-group-flush">
+        <h1 class="display-1 text-center">Obras</h1>
+        <ul>
+            <div class="row">
+                <div class="col-mb-3 mb-sm-0">
+                    <div class="card w-100">
+                        <div class="card-group mt-3">
+                            {% for obra in obras %}
+                            <div class="card-body">
+                                <li class="list-group-item">
+                                    <h2 class="card-title py-lg-4">{{obra.id}} - {{obra.obra}}</h2>
+                                    <p class="card-text">Ubicación: {{obra.ubicacion}}</p>
+                                    <p class="card-text">Contacto: {{obra.contacto}}</p>
+                                </li>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </ul>
+</main>
+{% endblock %}

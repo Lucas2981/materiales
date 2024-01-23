@@ -1,0 +1,25 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+
+<main class="container py-5">
+    <section class="card card-body">
+        <h1 class="display-1 text-center">{{ titulo }}</h1>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus pariatur itaque unde rerum maiores alias aliquam, eaque suscipit quasi. Vitae magnam minus deleniti? Corporis, voluptatibus est. Obcaecati dolores necessitatibus, optio commodi veniam eaque incidunt earum vel. Libero ex tempora cupiditate?</p>
+
+        <i>Developed by <strong>{{ creador }}</strong></i>
+        {% if user.is_authenticated %}
+        
+        {% else %}
+        <div class="text-center">
+            <a class="btn btn-secondary" href="/signin/">
+                Iniciar sesión
+            </a>
+            <a class="btn btn-dark" href="/signup/">
+                Registrarse
+            </a>
+        </div>
+        {% endif %}
+    </section>
+</main>
+
+{% endblock %}
