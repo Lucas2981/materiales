@@ -1,10 +1,9 @@
 from .models import Obra,IniciarPedidoSector
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CrearObra, CrearPedido
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.contrib.auth import login, logout, authenticate
-from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 
@@ -17,13 +16,13 @@ def index(request):
         'creador': creador
     })
 
-
+@login_required
 def obra(request):
     #obras = Obra.objects.all()
     obras = Obra.objects.filter(user=request.user) #se puede agregar mas filtros separados de la coma
     return render(request,'obra.html', {'obras': obras,})
 
-
+@login_required
 def create_obras(request):
     if request.method == 'GET':
         return render(request, 'create_obras.html', {
@@ -36,12 +35,12 @@ def create_obras(request):
         nueva_obra.save()
         return redirect('obras')
 
-
-
+@login_required
 def pedido(request):
     pedidos = IniciarPedidoSector.objects.filter(user=request.user)
     return render(request,'pedido.html',{'pedidos':pedidos})
 
+@login_required
 def create_pedidos(request):
     if request.method == 'GET':
         return render(request, 'create_pedido.html', {
