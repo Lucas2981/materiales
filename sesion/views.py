@@ -8,39 +8,21 @@ from .forms import CustomUserCreationForm
 
 # Create your views here.
 
-'''def signup(request):
-    if request.method == 'GET':
-        return render(request, 'signup.html', {
-            'form': UserCreationForm()
-        })
-    else:
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(
-                    username=request.POST['username'], password=request.POST['password1'])
-                user.save()
-                login(request, user)
-                return redirect('index')
-            except IntegrityError:
-                return render(request, 'signup.html', {
-                    'form': UserCreationForm(),
-                    'error': 'Nombre de usuario ya existe, intente otro nombre'
-                })
-        return render(request, 'signup.html', {
-            'form': UserCreationForm(),
-            'error': 'Contraseñas no coinciden'
-        })
-'''
+
 def signup(request):
     data = {
         'form':CustomUserCreationForm()
     }
     if request.method == 'POST':
         user_creation_form = CustomUserCreationForm(data=request.POST)
+
         if user_creation_form.is_valid():
             user_creation_form.save()
+            user = authenticate(username=user_creation_form.cleaned_data['username'], password=user_creation_form.cleaned_data['password1'])
+            login(request, user)
             return redirect('index')
-
+        else:
+            data['form'] = user_creation_form
     return render(request,'signup.html',data)
 
 @login_required

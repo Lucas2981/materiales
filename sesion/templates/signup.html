@@ -1,31 +1,18 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4 mt-5">
-            <form method="POST" class="card card-body">
-                <h1 class="text-center">Registrarse</h1>
-                {{error}}
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="username">Usuario:</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="Crear usuario">
-                </div>
-                <div class="mb-3">
-                    <label for="password1">Contraseña:</label>
-                    <input type="password" name="password1" id="password1" class="form-control" placeholder="Crear contraseña">
-                </div>
-                <div class="mb-3">
-                    <label for="password2">Confirme contraseña:</label>
-                    <input type="password" name="password2" id="password2" class="form-control" placeholder="Repita contraseña">
-                </div>
-                <button class="btn btn-primary">
-                    Registrar
-                </button>
-            </form>
+<h1 class="text-center py-3">Registrarse</h1>
+<form action="" id="signup2-form" method="POST">
+    {% csrf_token %}
+    <div class="card mx-auto" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">Complete su registro</h5>
+            {{ form | crispy }}
+            <a href={% url 'index' %} class="card-link">Inicio</a>
+            <a href={% url 'signin' %} class="card-link">Iniciar Sesión</a>
+            <button class="btn btn-sm btn-primary float-end" type="">Registrarse</button>
         </div>
     </div>
-</main>
-
+</form>
 {% endblock %}
