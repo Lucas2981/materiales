@@ -5,9 +5,9 @@ from .models import Obra, IniciarPedidoSector
 class CrearObra(ModelForm):
     class Meta:
         model = Obra
-        fields = ['obra','ubicacion','area','contacto','telefono']
+        fields = ['name','location','area','contacto','movil']
 
 class CrearPedido(ModelForm):
     class Meta:
         model = IniciarPedidoSector
-        fields = ['obra','sector','material','cantidad']
+        fields = ['name','sector','material','cantidad']

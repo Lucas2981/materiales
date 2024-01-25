@@ -16,13 +16,11 @@ def index(request):
         'creador': creador
     })
 
-@login_required
 def obra(request):
     #obras = Obra.objects.all()
     obras = Obra.objects.filter(user=request.user) #se puede agregar mas filtros separados de la coma
     return render(request,'obra.html', {'obras': obras,})
 
-@login_required
 def create_obras(request):
     if request.method == 'GET':
         return render(request, 'create_obras.html', {

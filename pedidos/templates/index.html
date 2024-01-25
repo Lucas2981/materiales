@@ -5,7 +5,7 @@
     <section class="card card-body">
         <h1 class="display-1 text-center">{{ titulo }}</h1>
         {% if request.user.is_authenticated %}
-        <h5>Hola {{user.first_name}}!</h5>
+        <h5>Hola {{user.first_name | upper}}!</h5>
         {% endif %}
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus pariatur itaque unde rerum maiores alias
             aliquam, eaque suscipit quasi. Vitae magnam minus deleniti? Corporis, voluptatibus est. Obcaecati dolores
