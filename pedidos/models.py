@@ -8,33 +8,42 @@ class Obra(models.Model):
     area = models.CharField('Area',max_length=1,choices=areas_SOP)
     contacto = models.CharField(max_length=100, blank=True)
     movil = models.CharField(max_length=11, blank=True, null=True, verbose_name='Teléfono')
-    user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Usuario')
+    user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado')
+    description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Descripción')
     def __str__(self):
-        return self.name
+        return self.name + ' - ' + self.user.username
 
 class sector(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Sector')
+    class Meta:
+        verbose_name = 'sector'
+        verbose_name_plural = 'sectores'
+        ordering = ['-id']
     def __str__(self):
         return self.name
 
 class material(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Material')
     unidad = models.CharField(max_length=20, verbose_name='Unidad')
+    class Meta:
+        verbose_name = 'insumo'
+        verbose_name_plural = 'insumos'
+        ordering = ['-id']
     def __str__(self):
         return self.name
 
 class IniciarPedidoSector(models.Model):
-    name=models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra')
+    name=models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra - Tec asignado')
     sector=models.ForeignKey(sector, on_delete=models.CASCADE, verbose_name='Sector')
     material=models.ForeignKey(material,on_delete=models.CASCADE, verbose_name='Material')
     cantidad=models.CharField(max_length=3, verbose_name='Cantidad')
-    user=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Usuario', editable=False)
+    user=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec_solicitante')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Creado')
-    validated = models.BooleanField(default=False, verbose_name='Aprovado', editable=False)
+    validated = models.BooleanField(default=False, verbose_name='Aprobado', editable=False)
     
     class Meta:
-        verbose_name = 'iniciar pedido'
-        verbose_name_plural = 'iniciar pedidos'
+        verbose_name = 'pedido'
+        verbose_name_plural = 'pedidos'
         ordering = ['-id']
     def __str__(self):
         return self.name.name
