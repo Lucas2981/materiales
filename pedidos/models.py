@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+
+
 class Obra(models.Model):
     areas_SOP = (('0','Escolar'),('1','Infraestructura'),('2','Intendencia'),('3','Salud'))
     name = models.CharField(max_length=200, verbose_name='Obra')
@@ -11,7 +12,7 @@ class Obra(models.Model):
     user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado')
     description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Descripción')
     def __str__(self):
-        return self.name + ' - ' + self.user.username
+        return self.name
 
 class sector(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Sector')
@@ -33,13 +34,14 @@ class material(models.Model):
         return self.name
 
 class IniciarPedidoSector(models.Model):
-    name=models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra - Tec asignado')
+    name=models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra')
     sector=models.ForeignKey(sector, on_delete=models.CASCADE, verbose_name='Sector')
     material=models.ForeignKey(material,on_delete=models.CASCADE, verbose_name='Material')
     cantidad=models.CharField(max_length=3, verbose_name='Cantidad')
-    user=models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec_solicitante')
+    description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Memoria')
+    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Tec_solicitante')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Creado')
-    validated = models.BooleanField(default=False, verbose_name='Aprobado', editable=False)
+    validated = models.BooleanField(default=False, verbose_name='Aprobado')
     
     class Meta:
         verbose_name = 'pedido'
