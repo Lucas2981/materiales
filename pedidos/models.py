@@ -14,7 +14,7 @@ class Obra(models.Model):
     def __str__(self):
         return self.name
 
-class sector(models.Model):
+class Sector(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Sector')
     class Meta:
         verbose_name = 'sector'
@@ -23,7 +23,7 @@ class sector(models.Model):
     def __str__(self):
         return self.name
 
-class material(models.Model):
+class Material(models.Model): # Habilidades
     name = models.CharField(max_length=150, unique=True, verbose_name='Material')
     unidad = models.CharField(max_length=20, verbose_name='Unidad')
     class Meta:
@@ -31,22 +31,32 @@ class material(models.Model):
         verbose_name_plural = 'insumos'
         ordering = ['-id']
     def __str__(self):
-        return self.name
-
-class IniciarPedidoSector(models.Model):
-    name=models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra')
-    sector=models.ForeignKey(sector, on_delete=models.CASCADE, verbose_name='Sector')
-    material=models.ForeignKey(material,on_delete=models.CASCADE, verbose_name='Material')
-    cantidad=models.CharField(max_length=3, verbose_name='Cantidad')
-    description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Memoria')
-    user=models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name='Tec_solicitante')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Creado')
-    validated = models.BooleanField(default=False, verbose_name='Aprobado')
-    
+        return self.name+' - '+self.unidad
+class Pedido(models.Model): # Empleado
+    obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
+    validated = models.BooleanField(default=False, verbose_name='Validado')
+    materiales = models.ManyToManyField(
+        Material,
+        through='MaterialesPedido',
+        blank=True,
+    )
     class Meta:
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
         ordering = ['-id']
     def __str__(self):
-        return self.name.name
-    
+        return self.obra.name
+class MaterialesPedido(models.Model): #HabilidadEmpleado
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, blank=True, null=True)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, blank=True, null=True)
+    cantidad = models.IntegerField()
+    class Meta:
+        verbose_name = 'material'
+        verbose_name_plural = 'materiales'
+        ordering = ['-id']
+    def __str__(self):
+        return self.pedido.obra.name
+

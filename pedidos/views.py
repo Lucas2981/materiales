@@ -1,6 +1,6 @@
-from .models import Obra,IniciarPedidoSector
+from .models import Obra
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CrearObra, CrearPedido
+from .forms import CrearObra
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
@@ -33,21 +33,21 @@ def create_obras(request):
         nueva_obra.save()
         return redirect('obras')
 
-@login_required
-def pedido(request):
-    pedidos = IniciarPedidoSector.objects.filter(user=request.user)
-    return render(request,'pedido.html',{'pedidos':pedidos})
+# @login_required
+# def pedido(request):
+#     pedidos = IniciarPedidoSector.objects.filter(user=request.user)
+#     return render(request,'pedido.html',{'pedidos':pedidos})
 
-@login_required
-def create_pedidos(request):
-    if request.method == 'GET':
-        return render(request, 'create_pedido.html', {
-            'form': CrearPedido
-        })
-    else:
-        form=CrearPedido(request.POST)
-        nuevo_pedido = form.save(commit=False)
-        nuevo_pedido.user = request.user
-        nuevo_pedido.save()
-        return redirect('crear_pedido')
+# @login_required
+# def create_pedidos(request):
+#     if request.method == 'GET':
+#         return render(request, 'create_pedido.html', {
+#             'form': CrearPedido
+#         })
+#     else:
+#         form=CrearPedido(request.POST)
+#         nuevo_pedido = form.save(commit=False)
+#         nuevo_pedido.user = request.user
+#         nuevo_pedido.save()
+#         return redirect('crear_pedido')
     
