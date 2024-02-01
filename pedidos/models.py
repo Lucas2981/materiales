@@ -9,7 +9,7 @@ class Obra(models.Model):
     area = models.CharField('Area',max_length=1,choices=areas_SOP)
     contacto = models.CharField(max_length=100, blank=True)
     movil = models.CharField(max_length=11, blank=True, null=True, verbose_name='Teléfono')
-    user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado')
+    user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
     description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Descripción')
     def __str__(self):
         return self.name
@@ -34,7 +34,7 @@ class Material(models.Model): # Habilidades
         return self.name+' - '+self.unidad
 class Pedido(models.Model): # Empleado
     obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
-    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
+    # sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
     validated = models.BooleanField(default=False, verbose_name='Validado')
@@ -53,6 +53,7 @@ class MaterialesPedido(models.Model): #HabilidadEmpleado
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.CASCADE, blank=True, null=True)
     cantidad = models.IntegerField()
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
     class Meta:
         verbose_name = 'material'
         verbose_name_plural = 'materiales'

@@ -28,7 +28,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['2cc4-181-14-144-155.ngrok-free.app','localhost:8000', '127.0.0.1'] # esto solo sirve para mostrar en debug a fabrizio
+CSRF_TRUSTED_ORIGINS = ['https://2cc4-181-14-144-155.ngrok-free.app'] # esto solo sirve para enviar formulario en debug
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
