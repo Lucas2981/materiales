@@ -28,8 +28,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['2cc4-181-14-144-155.ngrok-free.app','localhost:8000', '127.0.0.1'] # esto solo sirve para mostrar en debug a fabrizio
-CSRF_TRUSTED_ORIGINS = ['https://2cc4-181-14-144-155.ngrok-free.app'] # esto solo sirve para enviar formulario en debug
+ALLOWED_HOSTS = ['3ffa-181-14-144-155.ngrok-free.app','localhost:8000', '127.0.0.1'] # esto solo sirve para mostrar en debug a fabrizio
+CSRF_TRUSTED_ORIGINS = ['https://3ffa-181-14-144-155.ngrok-free.app'] # esto solo sirve para enviar formulario en debug
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'roles.apps.RolesConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'import_export',
 
 ]
  # Variables globales de cristy form para estilizar desde django
@@ -129,6 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 if not DEBUG:
     # Tell Django to copy statics to the `staticfiles` directory

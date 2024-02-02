@@ -32,24 +32,28 @@ class Material(models.Model): # Habilidades
         ordering = ['-id']
     def __str__(self):
         return self.name+' - '+self.unidad
-class Pedido(models.Model): # Empleado
+class Pedido(models.Model):
     obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
-    # sector = models.ForeignKey(Sector, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
+    memoria = models.TextField(max_length=500, blank=True,null=True, verbose_name='Memoria', help_text='En este campo, debes explicar brevemente el problema que quieres resolver y la solución que propones con los materiales que solicitas. Así, podrás justificar tu petición y agilizar el trámite de aprobación y compra de los recursos. Usa un lenguaje claro, conciso y preciso para expresar tu idea.')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
-    validated = models.BooleanField(default=False, verbose_name='Validado')
+    validated = models.BooleanField(default=False, verbose_name='Autorizado')
     materiales = models.ManyToManyField(
         Material,
         through='MaterialesPedido',
         blank=True,
     )
+    def codigo_pedido(self):
+        user_id = str(self.user)[:4].upper()
+        return f'COD{user_id}{str(self.id).zfill(4)}'
     class Meta:
         verbose_name = 'pedido'
         verbose_name_plural = 'pedidos'
         ordering = ['-id']
     def __str__(self):
-        return self.obra.name
-class MaterialesPedido(models.Model): #HabilidadEmpleado
+        user_id = str(self.user)[:4].upper()
+        return f'COD{user_id}{str(self.id).zfill(4)} <{self.obra.name}>'
+class MaterialesPedido(models.Model): 
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.CASCADE, blank=True, null=True)
     cantidad = models.IntegerField()

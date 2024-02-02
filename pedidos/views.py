@@ -1,4 +1,4 @@
-from .models import Obra
+from .models import Obra,MaterialesPedido
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CrearObra
 from django.contrib.auth.models import User
@@ -51,3 +51,6 @@ def create_obras(request):
 #         nuevo_pedido.save()
 #         return redirect('crear_pedido')
     
+def pedidos_materialespedido(request):
+    pedidos_materialespedido = MaterialesPedido.objects.all()
+    return render(request, 'pedidos_materialespedido.html', {'pedidos_materialespedido': pedidos_materialespedido})
