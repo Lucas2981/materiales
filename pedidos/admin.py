@@ -2,7 +2,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 from django.contrib import admin
-from .models import Obra, Sector, Material, Pedido,MaterialesPedido
+from .models import Obra, Sector, Material, Pedido,MaterialesPedido, Rubros
 
 class MaterialPedidoInline(admin.TabularInline):
     model = MaterialesPedido
@@ -11,22 +11,21 @@ class MaterialPedidoInline(admin.TabularInline):
     def get_readonly_fields(self, request, obj=None):
         if obj and obj.validated:  # condicionamos que solo el campo 'materiales' sea modificado en caso de no estar validado por el director
             return ['material', 'sector', 'cantidad']
-        return super().get_readonly_fields(request, obj)    
-# class PedidoExport(resources.ModelResource):
-#     fields = ('obra','user','created','validated', 'materiales__material','materiales__cantidad')
-#     class Meta:
-#         model = Pedido
+        return super().get_readonly_fields(request, obj)  
     def has_delete_permission(self, request, obj=None):
         if obj and obj.validated:
             return False
-        return super().has_delete_permission(request, obj)
-
-class PedidoAdmin(admin.ModelAdmin):
-    # resource_class = PedidoExport
+        return super().has_delete_permission(request, obj)  
+class PedidoExport(resources.ModelResource):
+    class Meta:
+        fields = ('id','obra','user','memoria','created','validated','materiales')
+        model = Pedido
+class PedidoAdmin(ImportExportModelAdmin):
+    resource_class = PedidoExport
     inlines = [MaterialPedidoInline,]
     list_display = ('codigo_pedido','obra','user','created','validated')
     search_fields = ('obra__name','user__username','user__groups__name', 'memoria') 
-    list_filter = ('validated','user__username','obra__name')
+    list_filter = ('validated','obra__area','user__username','obra__name')
     #filter_horizontal = ['materiales']
     def save_model(self, request, obj, form, change): # Asignamos el usuario que ha iniciado sesion
         if not obj.user:
@@ -54,14 +53,20 @@ admin.site.register(Pedido,PedidoAdmin)
 class ObraAdmin(admin.ModelAdmin):
     list_display = ('name','user','location', 'contacto','movil')
     search_fields = ('name','user__username','user__groups__name')
-    list_filter = ('user__groups','name')
+    list_filter = ('name','area' )
 admin.site.register(Obra,ObraAdmin)
-
-class materialAdmin(admin.ModelAdmin):
-    list_display = ('name','unidad')
-    search_fields = ('name',)
-    list_filter = ('name',)
+class materialAdmin(ImportExportModelAdmin):
+    list_display = ('id','name','unidad','rubro','referencia')
+    search_fields = ('name','referencia', 'id')
+    list_filter = ('rubro',)
+class MaterialExport(resources.ModelResource):
+    class Meta:
+        fields = ('name','unidad','rubro','referencia','rubro__name')
+        model = Material
 admin.site.register(Material,materialAdmin)
-
 admin.site.register(Sector)
 
+class RubrosAdmin(admin.ModelAdmin):
+    list_display = ('name','id','referencia')
+    search_fields = ('name',)
+admin.site.register(Rubros,RubrosAdmin)

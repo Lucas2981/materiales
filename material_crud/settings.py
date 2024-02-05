@@ -38,6 +38,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,8 +51,12 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'import_export',
-
+    'colorfield',
+    'pandas',
 ]
+# Editar admin
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
  # Variables globales de cristy form para estilizar desde django
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -59,6 +64,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
