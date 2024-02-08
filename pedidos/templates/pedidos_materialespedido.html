@@ -1,17 +1,24 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
 
-
 <main class="container py-5">
-    <h1>Pedido de Materiales</h1>
+    <h1>Pedido de Materiales - {{ obra_name }}</h1>
+    <h3>Pedido: {{ cod_pedido }}</h3>
     <br>
     {% if request.method == 'GET' %}
-        <a href="{% url 'descargar' %}" method="POST" class="btn btn-success">Descargar</a>
-    {% endif %}
+    <br>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_table}}
+        <button class="btn btn-success">Guardar</button>
+        {% endif %}
+        <a href="descargar/" method="POST" class="btn btn-secondary ">Descargar</a>
+    </form>
+    {{error}}
+    <hr size="5" color="grey" noshade>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Cod. Pedido</th>
                 <th>Material</th>
                 <th>Unidad</th>
                 <th>Cantidad</th>
@@ -20,7 +27,6 @@
         <tbody>
             {% for pedido_materialespedido in pedidos_materialespedido %}
             <tr>
-                <td>P{{ pedido_materialespedido.materialespedido__pedido }}{{ pedido_materialespedido.materialespedido__pedido__user__username|upper|slice:"0:4" }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__name }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__unidad }}</td>
                 <td>{{ pedido_materialespedido.cantidad }}</td>

@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Obra
+from .models import Obra, Pedido
 
 
 class CrearObra(ModelForm):
@@ -7,10 +7,10 @@ class CrearObra(ModelForm):
         model = Obra
         fields = ['name','location','area','contacto','movil']
 
-# class CrearPedido(ModelForm):
-#     class Meta:
-#         model = IniciarPedidoSector
-#         fields = ['name','sector','materiales']
-#     def __init__(self, request, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['user'].initial = request.user
+class PedidoForm(ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['a_proveedor','orden_compra']
+    # def __init__(self, request, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['user'].initial = request.user

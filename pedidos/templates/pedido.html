@@ -8,18 +8,20 @@
             <ul>
                 <div class="card-group mt-3">
                     {% for pedido in pedidos %}
-                    <div class="card-body">
-                        <li class="list-group-item">
-                            <h4 class="card-title py-lg-4">{{pedido.id}} {{pedido.obra}}</h4>
-                            <p class="card-text">{{pedido.sector}}</p>
-                        </li>
-                    </div>
+                    <a href="{% url 'pedidos_detalle' pedido.id %}">
+                        <div class="card-body">
+                            <li class="list-group-item">
+                                <h4 class="card-title py-lg-4">P{{pedido.id}}{{pedido.user.username|slice:"0:4"|upper}}:
+                                    {{pedido.obra}}</h4>
+                                <p class="card-text">A proveedor: {{pedido.a_proveedor}}</p>
+                        </div>
+                    </a>
+                    </li>
                     {% endfor %}
                 </div>
             </ul>
         </ul>
     </section>
 </main>
-
 
 {% endblock %}

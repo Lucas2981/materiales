@@ -20,17 +20,17 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href={% url 'obras' %}>Ver Obras</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href={% url 'crear_obra' %}>Crear obras</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href={% url 'pedidos' %} class="nav-link">Ver Pedidos</a>
                     </li>
                     <li class="nav-item">
-                        <a href='#' class="nav-link">Crear Pedidos</a>
+                        <a href='/admin' class="nav-link">Admin Pedidos</a>
                     </li>
                     <li class="nav-item">
                         <a href={% url 'logout' %} class="nav-link">Cerrar sesión</a>

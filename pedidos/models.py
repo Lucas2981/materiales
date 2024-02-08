@@ -49,6 +49,8 @@ class Pedido(models.Model):
     memoria = models.TextField(max_length=500, blank=True,null=True, verbose_name='Memoria', help_text='En este campo, debes explicar brevemente el problema que quieres resolver y la solución que propones con los materiales que solicitas. Usa un lenguaje claro, conciso y preciso para expresar tu idea.')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
     validated = models.BooleanField(default=False, verbose_name='Autorizado')
+    a_proveedor = models.BooleanField(default=False, verbose_name='A Proveedor')
+    orden_compra = models.CharField(max_length=20,unique=True ,blank=True,null=True, verbose_name='Orden de compra')
     materiales = models.ManyToManyField(
         Material,
         through='MaterialesPedido',

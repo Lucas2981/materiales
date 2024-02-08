@@ -23,9 +23,9 @@ class PedidoExport(resources.ModelResource):
 class PedidoAdmin(ImportExportModelAdmin):
     resource_class = PedidoExport
     inlines = [MaterialPedidoInline,]
-    list_display = ('codigo_pedido','obra','user','created','validated')
+    list_display = ('codigo_pedido','obra','user','created','validated', 'a_proveedor', 'orden_compra')
     search_fields = ('obra__name','user__username','user__groups__name', 'memoria') 
-    list_filter = ('validated','obra__area','user__username','obra__name')
+    list_filter = ('validated','a_proveedor','obra__area','user__username','obra__name')
     #filter_horizontal = ['materiales']
     def save_model(self, request, obj, form, change): # Asignamos el usuario que ha iniciado sesion
         if not obj.user:
@@ -33,11 +33,17 @@ class PedidoAdmin(ImportExportModelAdmin):
         obj.save()
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='Directores').exists():
-            return ['obra','memoria','user','created'] # Solo el campo 'validated' puede ser modificado
-        else:
+            if obj and obj.a_proveedor: # Si el pedido ya ha sido enviado a proveedor no se puede modificar en direcciones
+                return ['obra','memoria','user','validated','a_proveedor','orden_compra']
+            else:
+                return ['obra','memoria','user','created', 'a_proveedor','orden_compra'] # Solo el campo 'validated' puede ser modificado
+        elif request.user.groups.filter(name='Compras').exists():
             if obj and obj.validated: # Si el pedido ya ha sido validado no se puede modificar
                 return ['obra','memoria','user','validated','created'] 
-            return ['validated','user']  # Si no hay pedidos validados, Los campos 'validated' y 'user' serán de solo lectura
+        else:
+            if obj and obj.validated: # Si el pedido ya ha sido validado no se puede modificar
+                return ['obra','memoria','user','validated','created','a_proveedor','orden_compra'] 
+            return ['validated','user','a_proveedor','orden_compra']  # Si no hay pedidos validados, Los campos 'validated' y 'user' serán de solo lectura
     def get_queryset(self, request): # filtramos el queryset para que solo aparezcan las obras del usuario que ha iniciado sesion
         queryset = super().get_queryset(request)
         if request.user.is_authenticated:
