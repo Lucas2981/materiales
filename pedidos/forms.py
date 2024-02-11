@@ -1,16 +1,20 @@
 from django.forms import ModelForm
 from .models import Obra, Pedido
+from django import forms
+
 
 
 class CrearObra(ModelForm):
     class Meta:
         model = Obra
-        fields = ['name','location','area','contacto','movil']
+        fields = ['name','location','area']
 
 class PedidoForm(ModelForm):
     class Meta:
         model = Pedido
         fields = ['a_proveedor','orden_compra']
-    # def __init__(self, request, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.fields['user'].initial = request.user
+    
+class PedidoFormDir(ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['validated']

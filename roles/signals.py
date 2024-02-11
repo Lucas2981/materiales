@@ -7,9 +7,9 @@ from .models import Profile
 def add_user_to_views_group(sender, instance, created, **kwargs):
     if created:
         try:
-            group1 = Group.objects.get(name='Visitantes')
+            group1 = Group.objects.get(name='Tecnicos')
         except Group.DoesNotExist:
-            group1 = Group.objects.create(name='Visitantes')
+            group1 = Group.objects.create(name='Lucas')
             group2 = Group.objects.create(name='Tecnicos')
             group3 = Group.objects.create(name='Administrativos')
             group4 = Group.objects.create(name='Compras')

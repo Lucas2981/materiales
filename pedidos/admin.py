@@ -1,12 +1,12 @@
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-
+from django.contrib.auth.decorators import  user_passes_test
 from django.contrib import admin
 from .models import Obra, Sector, Material, Pedido,MaterialesPedido, Rubros
 
 class MaterialPedidoInline(admin.TabularInline):
     model = MaterialesPedido
-    extra = 1
+    extra = 0
     autocomplete_fields = ['material']
     def get_readonly_fields(self, request, obj=None):
         if obj and obj.validated:  # condicionamos que solo el campo 'materiales' sea modificado en caso de no estar validado por el director
@@ -20,12 +20,13 @@ class PedidoExport(resources.ModelResource):
     class Meta:
         fields = ('id','obra','user','memoria','created','validated','materiales')
         model = Pedido
-class PedidoAdmin(ImportExportModelAdmin):
-    resource_class = PedidoExport
+class PedidoAdmin(admin.ModelAdmin):
+    # resource_class = PedidoExport
     inlines = [MaterialPedidoInline,]
     list_display = ('codigo_pedido','obra','user','created','validated', 'a_proveedor', 'orden_compra')
     search_fields = ('obra__name','user__username','user__groups__name', 'memoria') 
-    list_filter = ('validated','a_proveedor','obra__area','user__username','obra__name')
+    list_filter = ('validated','a_proveedor','obra__area','user__username')
+    raw_id_fields = ['obra']
     #filter_horizontal = ['materiales']
     def save_model(self, request, obj, form, change): # Asignamos el usuario que ha iniciado sesion
         if not obj.user:
@@ -55,24 +56,31 @@ class PedidoAdmin(ImportExportModelAdmin):
     def queryset(self, request):
         return super().queryset(request).filter(user__groups__name='Tecnicos').filter(validated=False)
 admin.site.register(Pedido,PedidoAdmin)
-
-class ObraAdmin(admin.ModelAdmin):
-    list_display = ('name','user','location', 'contacto','movil')
-    search_fields = ('name','user__username','user__groups__name')
-    list_filter = ('name','area' )
+class ObraAdmin(ImportExportModelAdmin):
+    list_display = ('name','location', 'dpto','localidad')
+    search_fields = ('name','location', 'dpto','localidad')
+    list_filter = ('area', 'dpto', 'localidad', 'municipio')
+class ObraExport(resources.ModelResource):
+    class Meta:
+        fields = ('id','name','location','area','dpto','localidad','municipio','frac','radio','tipo','internacion','nivel_sector','plaza','lugar','cue','anexo','cp','periodo_func','geometry')
+        model = Obra
 admin.site.register(Obra,ObraAdmin)
-class materialAdmin(ImportExportModelAdmin):
+class MaterialExport(resources.ModelResource):
+    class Meta:
+        fields = ('id','name','unidad','rubro','referencia','rubro__name')
+        model = Material
+# class MaterialAdmin(admin.ModelAdmin):
+class MaterialAdmin(ImportExportModelAdmin):
+    resource_class = MaterialExport
     list_display = ('id','name','unidad','rubro','referencia')
     search_fields = ('name','referencia', 'id')
     list_filter = ('rubro',)
-class MaterialExport(resources.ModelResource):
-    class Meta:
-        fields = ('name','unidad','rubro','referencia','rubro__name')
-        model = Material
-admin.site.register(Material,materialAdmin)
+
+admin.site.register(Material,MaterialAdmin)
+
 admin.site.register(Sector)
 
 class RubrosAdmin(admin.ModelAdmin):
-    list_display = ('name','id','referencia')
+    list_display = ('name','referencia')
     search_fields = ('name',)
 admin.site.register(Rubros,RubrosAdmin)

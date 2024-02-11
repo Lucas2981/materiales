@@ -5,7 +5,7 @@
     <section class="card card-body">
         <h1 class="display-1 text-center">{{ titulo }}</h1>
         {% if request.user.is_authenticated %}
-        <h5>Hola {{user.first_name | upper}}!</h5>
+        <h5>Hola {% if user.first_name == '' %} {{user.username}} {% else %} {{user.first_name | upper}} {% endif %}!</h5>
         {% endif %}
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus pariatur itaque unde rerum maiores alias
             aliquam, eaque suscipit quasi. Vitae magnam minus deleniti? Corporis, voluptatibus est. Obcaecati dolores
@@ -18,9 +18,6 @@
         <div class="text-center">
             <a class="btn btn-secondary" href="/signin/">
                 Iniciar sesión
-            </a>
-            <a class="btn btn-dark" href="/signup/">
-                Registrarse
             </a>
         </div>
         {% endif %}

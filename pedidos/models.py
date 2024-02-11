@@ -1,16 +1,32 @@
 from django.db import models
 from django.contrib.auth.models import User
+# from django.contrib.gis.db import models
 
 
 class Obra(models.Model):
     areas_SOP = (('0','Escolar'),('1','Infraestructura'),('2','Intendencia'),('3','Salud'))
-    name = models.CharField(max_length=200, verbose_name='Obra', unique=True)
-    location = models.CharField(max_length=200, verbose_name='Ubicación')
+    name = models.CharField(max_length=200, verbose_name='Obra')
+    location = models.CharField(max_length=200, verbose_name='Ubicación', blank=True, null=True)
     area = models.CharField('Area',max_length=1,choices=areas_SOP)
-    contacto = models.CharField(max_length=100, blank=True)
-    movil = models.CharField(max_length=11, blank=True, null=True, verbose_name='Teléfono')
-    user= models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
-    description = models.TextField(max_length=500, blank=True,null=True, verbose_name='Descripción')
+    dpto = models.CharField(max_length=150, blank=True, null=True, verbose_name='Departamento')
+    localidad = models.CharField(max_length=150, blank=True, null=True, verbose_name='Localidad')
+    municipio = models.CharField(max_length=150, blank=True, null=True, verbose_name='Municipio')
+    frac = models.CharField(max_length=2, blank=True, null=True, verbose_name='Fracción')
+    radio = models.CharField(max_length=2, blank=True, null=True, verbose_name='Radio')
+    tipo = models.CharField(max_length=150, blank=True, null=True, verbose_name='Tipo')
+    internacion = models.CharField(max_length=150, blank=True, null=True, verbose_name='Internación')
+    nivel_sector = models.CharField(max_length=150, blank=True, null=True, verbose_name='Nivel/Sector')
+    plaza = models.IntegerField(blank=True, null=True, verbose_name='Plaza')
+    lugar = models.CharField(max_length=150, blank=True, null=True, verbose_name='Lugar')
+    cue = models.IntegerField(blank=True, null=True, verbose_name='CUE')
+    anexo = models.CharField(max_length=2, blank=True, null=True, verbose_name='Anexo')
+    cp = models.CharField(max_length=5, blank=True, null=True, verbose_name='CP')
+    periodo_func = models.CharField(max_length=150, blank=True, null=True, verbose_name='Periodo de Funcionamiento')
+    geometry = models.CharField(max_length=150, blank=True, null=True, verbose_name='Georeferencia')
+    class Meta:
+        verbose_name = 'obra'
+        verbose_name_plural = 'obras'
+        ordering = ['name']
     def __str__(self):
         return self.name
 
@@ -65,7 +81,7 @@ class Pedido(models.Model):
         ordering = ['-id']
     def __str__(self):
         user_id = str(self.user)[:4].upper()
-        return f'P{str(self.id)}{user_id} <{self.obra.name}>'
+        return f'P{str(self.id)}{user_id} - {self.obra.name}'
 class MaterialesPedido(models.Model): 
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.CASCADE, blank=True, null=True)

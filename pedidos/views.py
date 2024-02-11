@@ -1,8 +1,9 @@
 from .models import Pedido, Obra
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CrearObra, PedidoForm
+from .forms import CrearObra, PedidoForm, PedidoFormDir
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 # Librerias para exportar pedidos a excel
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -16,13 +17,13 @@ def index(request):
         'titulo': saludo,
         'creador': creador
     })
-
+@login_required
 def obra(request):
     # obras = Obra.objects.all()
     # se puede agregar mas filtros separados de la coma
     obras = Obra.objects.filter(user=request.user)
     return render(request, 'obra.html', {'obras': obras, })
-
+@login_required
 def create_obras(request):
     if request.method == 'GET':
         return render(request, 'create_obras.html', {
@@ -34,50 +35,112 @@ def create_obras(request):
         nueva_obra.user = request.user
         nueva_obra.save()
         return redirect('obras')
-
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=['Compras','Lucas']).exists())
 def pedidos(request):
     pedidos = Pedido.objects.filter(validated=True).order_by('a_proveedor', 'id')
+    queryset = request.GET.get('buscar')
+    if queryset:
+        pedidos = Pedido.objects.filter(
+            Q(obra__name__icontains=queryset) |
+            Q(user__username__icontains=queryset)|
+            Q(orden_compra__icontains=queryset)|
+            Q(id__icontains=queryset),
+            validated=True).distinct().order_by('a_proveedor', 'id')
     return render(request, 'pedido.html', {'pedidos': pedidos, })
 @login_required
-@user_passes_test(lambda u: u.groups.filter(name__in=['Compras','Directores']).exists())
+@user_passes_test(lambda u: u.groups.filter(name__in=['Directores','Lucas']).exists())
+def pedidosDir(request):
+    pedidos = Pedido.objects.all().order_by('validated', 'id')
+    queryset = request.GET.get('buscar')
+    if queryset:
+        pedidos = Pedido.objects.filter(
+            Q(obra__name__icontains=queryset) |
+            Q(user__username__icontains=queryset)|
+            Q(orden_compra__icontains=queryset)|
+            Q(id__icontains=queryset),
+            ).distinct().order_by('validated', 'id')
+    return render(request, 'pedidoDir.html', {'pedidos': pedidos, })
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=['Compras','Lucas']).exists())
 def pedidos_materialespedido(request, pedido_id):
     # Obtener todos los pedidos de materiales
     pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
     # Agrupar los pedidos por obra y material
-    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name').annotate(cantidad=Sum('materialespedido__cantidad'))
     # Convertir el resultado a una lista
     pedidos_materialespedido = list(pedidos_agrupados)
     obra_name = pedidos_materialespedido[0]['materialespedido__pedido__obra__name'].capitalize()
     cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
-    if request.user.groups.filter(name='Directores').exists():
+    if request.method == 'GET':
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+        form = PedidoForm(instance=pedido)
         return render(request, 'pedidos_materialespedido.html', {
             'pedidos_materialespedido': pedidos_materialespedido,
+            'form': form,
             'obra_name': obra_name,
             'cod_pedido': cod_pedido,
             })
     else:
-        if request.method == 'GET':
+        try:
+            pedido = get_object_or_404(Pedido, pk=pedido_id)
+            form = PedidoForm(request.POST, instance=pedido)
+            form.save()
+            return redirect('pedidos')
+        except ValueError:
             pedido = get_object_or_404(Pedido, pk=pedido_id)
             form = PedidoForm(instance=pedido)
             return render(request, 'pedidos_materialespedido.html', {
-                'pedidos_materialespedido': pedidos_materialespedido,
-                'form': form,
-                'obra_name': obra_name,
-                'cod_pedido': cod_pedido,
-                })
-        else:
-            try:
-                pedido = get_object_or_404(Pedido, pk=pedido_id)
-                form = PedidoForm(request.POST, instance=pedido)
-                form.save()
-                return redirect('pedidos')
-            except ValueError:
-                return render(request, 'pedidos_materialespedido.html', {
-                    'pedidos_materialespedido': pedidos_materialespedido,
-                    'form': form,
-                    'error': 'Error al editar el pedido.'
-                })
-def generar_archivo_xls(request,pedido_id):
+            'pedidos_materialespedido': pedidos_materialespedido,
+            'form': form,
+            'obra_name': obra_name,
+            'cod_pedido': cod_pedido,
+            'error': 'Cod de pedido ya existe.'
+            })
+
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=['Directores','Lucas']).exists())
+def pedidos_materialespedidoDir(request, pedido_id):
+    # Obtener todos los pedidos de materiales
+    pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
+    # Agrupar los pedidos por obra y material
+    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+    # Convertir el resultado a una lista
+    pedidos_materialespedido = list(pedidos_agrupados)
+    obra_name = pedidos_materialespedido[0]['materialespedido__pedido__obra__name'].capitalize()
+    cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
+    a_proveedor = pedidos_materiales.values_list('materialespedido__pedido__a_proveedor')[0][0]
+
+    print(a_proveedor)
+    if request.method == 'GET':
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+        form = PedidoFormDir(instance=pedido)
+        return render(request, 'pedidos_materialespedidoDir.html', {
+            'pedidos_materialespedido': pedidos_materialespedido,
+            'form': form,
+            'obra_name': obra_name,
+            'cod_pedido': cod_pedido,
+            'a_proveedor': a_proveedor
+            })
+    else:
+        try:
+            pedido = get_object_or_404(Pedido, pk=pedido_id)
+            form = PedidoFormDir(request.POST, instance=pedido)
+            form.save()
+            return redirect('pedidosDir')
+        except ValueError:
+            pedido = get_object_or_404(Pedido, pk=pedido_id)
+            form = PedidoFormDir(instance=pedido)
+            return render(request, 'pedidos_materialespedidoDir.html', {
+            'pedidos_materialespedido': pedidos_materialespedido,
+            'form': form,
+            'obra_name': obra_name,
+            'cod_pedido': cod_pedido,
+            'a_proveedor': a_proveedor,
+            'error': 'Error al validar pedido.'
+            })
+@login_required
+def generar_archivo_xls(request,pedido_id): #aqui falta agregar columna de rubro
     try:
         # Obtener todos los pedidos de materiales
         pedidos_materiales = Pedido.objects.filter(pk=pedido_id)

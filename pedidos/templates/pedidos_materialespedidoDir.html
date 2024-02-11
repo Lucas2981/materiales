@@ -7,7 +7,9 @@
     <br>
     {% if request.method == 'GET' %}
     <br>
-    {% if perms.pedidos.add_material %}
+    {% if perms.pedidos.add_sector %}
+    {% if a_proveedor  %}
+    {% else %}
     <form action="" method="post">
         {% csrf_token %}
         {{form.as_table}}
@@ -15,6 +17,7 @@
         {% endif %}
         <a href="descargar/" method="POST" class="btn btn-dark ">Descargar</a>
     </form>
+    {% endif %}
     {% endif %}
     {{error}}
     <hr size="5" color="grey" noshade>
@@ -30,7 +33,7 @@
         <tbody>
             {% for pedido_materialespedido in pedidos_materialespedido %}
             <tr>
-                <td>{{ pedido_materialespedido.materialespedido__material__rubro__name }}</td>
+                <td>{{ c.materialespedido__material__rubro__name }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__name }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__unidad }}</td>
                 <td>{{ pedido_materialespedido.cantidad }}</td>
