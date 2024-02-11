@@ -15,7 +15,7 @@
         {{form.as_table}}
         <button class="btn btn-secondary">Guardar</button>
         {% endif %}
-        <a href="descargar/" method="POST" class="btn btn-dark ">Descargar</a>
+        <a href="descargar/sectores" method="POST" class="btn btn-dark ">Descargar</a>
     </form>
     {% endif %}
     {% endif %}
@@ -24,7 +24,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Rubro</th>
+                <th>Sector</th>
                 <th>Material</th>
                 <th>Unidad</th>
                 <th>Cantidad</th>
@@ -33,7 +33,7 @@
         <tbody>
             {% for pedido_materialespedido in pedidos_materialespedido %}
             <tr>
-                <td>{{ c.materialespedido__material__rubro__name }}</td>
+                <td>{{ pedido_materialespedido.materialespedido__sector__name }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__name }}</td>
                 <td>{{ pedido_materialespedido.materialespedido__material__unidad }}</td>
                 <td>{{ pedido_materialespedido.cantidad }}</td>

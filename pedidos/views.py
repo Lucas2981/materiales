@@ -12,7 +12,7 @@ import pandas as pd
 
 def index(request):
     saludo = 'Portal de Pedidos'
-    creador = 'Lucas Leiva'
+    creador = 'Lucas L.'
     return render(request, 'index.html', {
         'titulo': saludo,
         'creador': creador
@@ -104,14 +104,12 @@ def pedidos_materialespedidoDir(request, pedido_id):
     # Obtener todos los pedidos de materiales
     pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
     # Agrupar los pedidos por obra y material
-    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name', 'materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad'))
     # Convertir el resultado a una lista
     pedidos_materialespedido = list(pedidos_agrupados)
     obra_name = pedidos_materialespedido[0]['materialespedido__pedido__obra__name'].capitalize()
     cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
     a_proveedor = pedidos_materiales.values_list('materialespedido__pedido__a_proveedor')[0][0]
-
-    print(a_proveedor)
     if request.method == 'GET':
         pedido = get_object_or_404(Pedido, pk=pedido_id)
         form = PedidoFormDir(instance=pedido)
@@ -145,15 +143,15 @@ def generar_archivo_xls(request,pedido_id): #aqui falta agregar columna de rubro
         # Obtener todos los pedidos de materiales
         pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
         # Agrupar los pedidos por obra y material
-        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad').annotate(cantidad=Sum('materialespedido__cantidad'))
+        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__material__rubro__name',).annotate(cantidad=Sum('materialespedido__cantidad'))
         # Convertir el resultado a una lista
         pedidos_materialespedido = list(pedidos_agrupados)
         pedidos_df = pd.DataFrame(pedidos_materialespedido)
         cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
-        df = pedidos_df.rename(columns={'materialespedido__pedido__obra__name':'Obra','materialespedido__pedido':'Pedido N°','materialespedido__material__name':'Material','materialespedido__material__unidad':'Unidad','cantidad':'Cant. Solicitada'})
+        df = pedidos_df.rename(columns={'materialespedido__pedido__obra__name':'Obra','materialespedido__pedido':'Pedido N°','materialespedido__material__name':'Material','materialespedido__material__unidad':'Unidad','cantidad':'Cant. Solicitada','materialespedido__material__rubro__name':'Rubro'})
         # df = df['Pedido N°'] == pk
-        df = df[['Obra','Material','Unidad','Cant. Solicitada']]
-        df = df.sort_values('Material')
+        df = df[['Rubro','Material','Unidad','Cant. Solicitada']]
+        df = df.sort_values(['Rubro','Material'])
         
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="pedido_{pedidos_df["materialespedido__pedido__obra__name"][0]}.xlsx"'
@@ -167,6 +165,34 @@ def generar_archivo_xls(request,pedido_id): #aqui falta agregar columna de rubro
         return response
     except:
         return redirect('pedidos_detalle')
+@login_required
+def generar_archivo_xlsDir(request,pedido_id): #aqui falta agregar columna de rubro
+    try:
+        # Obtener todos los pedidos de materiales
+        pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
+        # Agrupar los pedidos por obra y material
+        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+        # Convertir el resultado a una lista
+        pedidos_materialespedido = list(pedidos_agrupados)
+        pedidos_df = pd.DataFrame(pedidos_materialespedido)
+        cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
+        df = pedidos_df.rename(columns={'materialespedido__pedido__obra__name':'Obra','materialespedido__pedido':'Pedido N°','materialespedido__material__name':'Material','materialespedido__material__unidad':'Unidad','cantidad':'Cant. Solicitada','materialespedido__sector__name':'Sector'})
+        # df = df['Pedido N°'] == pk
+        df = df[['Sector','Material','Unidad','Cant. Solicitada']]
+        df = df.sort_values(['Sector','Material'])
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="pedido_{pedidos_df["materialespedido__pedido__obra__name"][0]}.xlsx"'
+        writer = pd.ExcelWriter(response)
+        df.to_excel(writer, sheet_name=cod_pedido, index=False)
+        for column in df:
+            column_width = max(df[column].astype(str).map(len).max(), len(column))
+            col_idx = df.columns.get_loc(column)
+            writer.sheets[cod_pedido].set_column(col_idx, col_idx, column_width)
+        writer.close()
+        return response
+    except:
+        return redirect('pedidos_detalle_dir')
 
 def es_comprador_o_director(user):
     return user.groups.filter(name__in=["Compras", "Directores"]).exists()

@@ -69,18 +69,19 @@ class MaterialExport(resources.ModelResource):
     class Meta:
         fields = ('id','name','unidad','rubro','referencia','rubro__name')
         model = Material
-# class MaterialAdmin(admin.ModelAdmin):
 class MaterialAdmin(ImportExportModelAdmin):
     resource_class = MaterialExport
     list_display = ('id','name','unidad','rubro','referencia')
     search_fields = ('name','referencia', 'id')
     list_filter = ('rubro',)
-
 admin.site.register(Material,MaterialAdmin)
-
-admin.site.register(Sector)
-
-class RubrosAdmin(admin.ModelAdmin):
+class RubrosAdmin(ImportExportModelAdmin):
     list_display = ('name','referencia')
     search_fields = ('name',)
+class RubrosExport(resources.ModelResource):
+    class Meta:
+        fields = ('id','name','referencia')
+        model = Rubros
 admin.site.register(Rubros,RubrosAdmin)
+
+admin.site.register(Sector)

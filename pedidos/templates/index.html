@@ -3,15 +3,17 @@
 
 <main class="container py-5">
     <section class="card card-body">
-        <h1 class="display-1 text-center">{{ titulo }}</h1>
         {% if request.user.is_authenticated %}
+        <h1 class="display-1 text-center">{{ titulo }}</h1>
         <h5>Hola {% if user.first_name == '' %} {{user.username}} {% else %} {{user.first_name | upper}} {% endif %}!</h5>
-        {% endif %}
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus pariatur itaque unde rerum maiores alias
-            aliquam, eaque suscipit quasi. Vitae magnam minus deleniti? Corporis, voluptatibus est. Obcaecati dolores
-            necessitatibus, optio commodi veniam eaque incidunt earum vel. Libero ex tempora cupiditate?</p>
+        <p>Bienvenido a la aplicación web para solicitud de pedidos de materiales del ministerio de obras publicas. Esta web es para uso exclusivo del personal autorizado por el ministerio. Aquí podrá gestionar sus solicitudes de forma rápida, fácil y segura. Podrá consultar el estado de sus pedidos y el historial de sus operaciones. También podrá comunicarse con el equipo técnico en caso de tener alguna duda o problema. Esperamos que esta aplicación sea de gran utilidad y que ayude a optimizar tu trabajo.</p>
 
-        <i>Developed by <strong>{{ creador }}</strong></i>
+        <i>Consultas por WhatsApp <a target="_blank" class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="https://wa.me/5493834225785?text=Hola%20Lucas,%20tengo%20una%20duda...">aqui</a></i>
+        {% else %}
+        <h1 class="display-1 text-center">App Web de Pedidos</h1>
+        <br>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet praesentium debitis placeat repellat dolorum iure. Explicabo esse quis mollitia officia amet velit, possimus corrupti, quo, deleniti impedit minima suscipit placeat magnam similique expedita ex voluptates nemo debitis nostrum distinctio? Blanditiis, laboriosam? Doloribus quam aspernatur libero quis. Quas error dignissimos quis fuga rerum! Libero consectetur esse laudantium ipsa expedita voluptatum, officia eos eligendi repellendus beatae, corporis tenetur aliquid ea maiores laborum qui quasi, optio dignissimos? Quo labore eos tenetur quaerat. Quo fugiat animi esse a ducimus sed voluptas, dolor reiciendis deleniti corrupti assumenda. Ab odit repudiandae repellendus expedita! Assumenda laboriosam suscipit recusandae nemo, aliquam quo voluptate fugiat veritatis delectus. Omnis hic accusantium architecto labore reprehenderit voluptate modi laboriosam, ad voluptatem corporis, voluptatibus iste magnam expedita aspernatur facere cum necessitatibus nesciunt illo. Quam libero modi, quas blanditiis excepturi suscipit hic, fugit veritatis vitae deleniti illo porro, nostrum recusandae molestiae minus nam asperiores iure necessitatibus adipisci enim dignissimos tempore sit. Commodi doloribus dolorum voluptatem, fugiat nisi, dicta, aliquid sapiente nesciunt autem magnam ab tempore. Quibusdam optio nulla obcaecati deleniti, doloribus accusamus atque, harum illo vero quaerat commodi ut minus! Voluptatibus delectus suscipit nobis in aliquid! Facere corporis, quo rem deserunt molestias nam non reprehenderit sint et obcaecati, adipisci labore temporibus totam officia quibusdam eveniet? Eveniet deleniti perspiciatis laborum fuga rerum delectus cupiditate ullam facere debitis nostrum ipsum, placeat ea veniam expedita maxime, aspernatur accusantium possimus laudantium natus quasi consequatur ipsa necessitatibus, sed fugiat! Dolores eius quo vitae aut officia magni officiis numquam velit.</p>
+        {% endif %}
         {% if user.is_authenticated %}
 
         {% else %}
