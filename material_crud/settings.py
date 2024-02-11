@@ -28,8 +28,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['3ffa-181-14-144-155.ngrok-free.app','localhost:8000', '127.0.0.1'] # esto solo sirve para mostrar en debug a fabrizio
-CSRF_TRUSTED_ORIGINS = ['https://3ffa-181-14-144-155.ngrok-free.app'] # esto solo sirve para enviar formulario en debug
+ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['3ffa-181-14-144-155.ngrok-free.app','localhost:8000', '127.0.0.1'] # esto solo sirve para mostrar en debug a fabrizio
+
+# CSRF_TRUSTED_ORIGINS = ['https://3ffa-181-14-144-155.ngrok-free.app'] # esto solo sirve para enviar formulario en debug
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -97,8 +99,8 @@ WSGI_APPLICATION = "material_crud.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-#DATABASES = {'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/mysite',conn_max_age=600)}
-DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": BASE_DIR / "db.sqlite3",}}
+DATABASES = {'default': dj_database_url.config(default='postgresql://postgres:postgres@localhost:5432/mysite',conn_max_age=600)}
+# DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3","NAME": BASE_DIR / "db.sqlite3",}}
 
 
 # Password validation
