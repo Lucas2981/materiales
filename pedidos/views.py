@@ -67,7 +67,9 @@ def pedidos_materialespedido(request, pedido_id):
     # Obtener todos los pedidos de materiales
     pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
     # Agrupar los pedidos por obra y material
-    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name').annotate(cantidad=Sum('materialespedido__cantidad')).order_by('materialespedido__material__rubro__name', 'materialespedido__material__name')
+    # Convertir el resultado a una lista
+    pedidos_materialespedido = list(pedidos_agrupados)
     # Convertir el resultado a una lista
     pedidos_materialespedido = list(pedidos_agrupados)
     obra_name = pedidos_materialespedido[0]['materialespedido__pedido__obra__name'].capitalize()
@@ -104,12 +106,13 @@ def pedidos_materialespedidoDir(request, pedido_id):
     # Obtener todos los pedidos de materiales
     pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
     # Agrupar los pedidos por obra y material
-    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name', 'materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+    pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido','materialespedido__pedido__user__username' ,'materialespedido__material__name','materialespedido__material__unidad','materialespedido__pedido__obra__name', 'materialespedido__material__rubro__name', 'materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad')).order_by('materialespedido__sector__name','materialespedido__material__name')
     # Convertir el resultado a una lista
     pedidos_materialespedido = list(pedidos_agrupados)
     obra_name = pedidos_materialespedido[0]['materialespedido__pedido__obra__name'].capitalize()
     cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
     a_proveedor = pedidos_materiales.values_list('materialespedido__pedido__a_proveedor')[0][0]
+    ubicacion = pedidos_materiales.values_list('materialespedido__pedido__obra__localidad')[0][0]+', Dpto. '+pedidos_materiales.values_list('materialespedido__pedido__obra__dpto')[0][0]
     if request.method == 'GET':
         pedido = get_object_or_404(Pedido, pk=pedido_id)
         form = PedidoFormDir(instance=pedido)
@@ -118,7 +121,8 @@ def pedidos_materialespedidoDir(request, pedido_id):
             'form': form,
             'obra_name': obra_name,
             'cod_pedido': cod_pedido,
-            'a_proveedor': a_proveedor
+            'a_proveedor': a_proveedor,
+            'ubicacion': ubicacion
             })
     else:
         try:
@@ -135,6 +139,7 @@ def pedidos_materialespedidoDir(request, pedido_id):
             'obra_name': obra_name,
             'cod_pedido': cod_pedido,
             'a_proveedor': a_proveedor,
+            'ubicacion': ubicacion,
             'error': 'Error al validar pedido.'
             })
 @login_required

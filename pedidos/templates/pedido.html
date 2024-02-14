@@ -6,10 +6,10 @@
     <br>
     <div class="container">
         <div class="row">
-            <div class="col-md-6 search">
+            <div class="col-md-12 search">
                 <form method="get">
                     <div id="custom-search-input">
-                        <div class="input-group col-md-6">
+                        <div class="input-group col-md-12">
                             <input type="text" class="form-control" placeholder="Buscar..." name="buscar" value="{{ request.GET.buscar }}">
                             <span class="input-group-list">
                                 <i class="icon icon-search"></i>
@@ -24,26 +24,30 @@
     </div>
     <hr size="5" color="grey" noshade>
     </class>
-    <table class="table table-striped">
-        <thead>
-            <th>Cod. Pedido</th>
-            <th>Obra</th>
-            <th>A proveedor</th>
-            <th>Orden de compra</th>
-        </thead>
-        <tbody>
-            {% for pedido in pedidos %}
-            <tr>
-                <td><a href="{% url 'pedidos_detalle' pedido.id %}"
-                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{pedido.codigo_pedido}}</a>
-                </td>
-                <td>{{pedido.obra}}</td>
-                <td>{% if pedido.a_proveedor == True %}✅{% else %}⌛{% endif %}</td>
-                <td>{% if pedido.orden_compra == null %} Sin asignar{% else %}{{pedido.orden_compra}}{% endif %}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-success">
+                <th>Cod. Pedido</th>
+                <th>Área</th>
+                <th>Obra</th>
+                <th>A proveedor</th>
+                <th>Orden de compra</th>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td><a href="{% url 'pedidos_detalle' pedido.id %}"
+                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{pedido.codigo_pedido}}</a>
+                    </td>
+                    <td>{{pedido.obra.get_area_display}}</td>
+                    <td>{{pedido.obra}}</td>
+                    <td>{% if pedido.a_proveedor == True %}✅{% else %}⌛{% endif %}</td>
+                    <td>{% if pedido.orden_compra == null %} Sin asignar{% else %}{{pedido.orden_compra}}{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </main>
 
 {% endblock %}

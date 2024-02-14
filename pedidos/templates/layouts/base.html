@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0C4B33;">
+    <nav class="navbar navbar-expand-lg navbar-dark pt-5" style="background-color: #0C4B33;">
+        
         <div class="container">
             <a class="navbar-brand" href="/">Inicio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -32,7 +33,7 @@
                     {% endif %}
                     {% if perms.pedidos.view_material %}
                     <li class="nav-item">
-                        <a href='/admin' class="nav-link">Area Técnica - Pedidos</a>
+                        <a href='/admin' class="nav-link">Área Técnica - Pedidos</a>
                     </li>
                     {% endif %}
                     <li class="nav-item">
@@ -47,6 +48,11 @@
             </div>
         </div>
     </nav>
+    <div class="row">
+        <div class="col pt-2" style="background-color: #44B78B;">
+            
+        </div>
+    </div>
     {% block content %}
     {% endblock %}
 </body>
