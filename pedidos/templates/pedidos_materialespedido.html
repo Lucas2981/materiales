@@ -1,26 +1,29 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 
 <main class="container py-5">
     <h1 class="display-1 text-center">Pedido de Compra</h1>
     <br>
-    <span>
+    <div>
         <h4>Obra: {{ obra_name }}</h4>
-        <h6>Ubicacion: {{ ubicacion }}</h6>
         <h6>Pedido: {{ cod_pedido }}</h6>
-    </span>
+        <h6>Ubicacion: {{ ubicacion }}</h6>
+    </div>
     {% if request.method == 'GET' %}
-    <br>
     {% if perms.pedidos.add_material %}
     <form action="" method="post">
         {% csrf_token %}
-        {{form.as_table}}
-        <button class="btn btn-secondary">Guardar</button>
+        {{ form | crispy }}
+        <button class="btn btn-secondary"><i class="bi bi-floppy"></i> Guardar</button>
         {% endif %}
-        <a href="descargar/" method="POST" class="btn btn-dark ">Descargar</a>
+        <a href="descargar/" method="POST" class="btn btn-dark ">
+            <i class="bi bi-cloud-download"></i> Descargar
+        </a>
     </form>
     {% endif %}
     {{error}}
+    <br>
     <hr size="5" color="grey" noshade>
     <table class="table table-striped">
         <thead>

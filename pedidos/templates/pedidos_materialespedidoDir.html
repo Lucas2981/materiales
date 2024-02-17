@@ -1,29 +1,44 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
 
 <main class="container py-5">
     <h1 class="display-1 text-center">Detalle del Pedido</h1>
     <br>
-    <span>
+    <div class="row">
         <h4>Obra: {{ obra_name }}</h4>
-        <h6>Ubicacion: {{ ubicacion }}</h6>
         <h6>Pedido: {{ cod_pedido }}</h6>
-    </span>
+        <h6>Ubicacion: {{ ubicacion }}</h6>
+        <div class="col-2">
+            <h6>Memoria:</h6>
+        </div>
+        <div class="col-10">
+            {% if memoria == '' %}
+            S/D
+            {% else %}
+            <div class="card container">
+                {{ memoria }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
     {% if request.method == 'GET' %}
-    <br>
     {% if perms.pedidos.add_sector %}
-    {% if a_proveedor  %}
+    {% if a_proveedor %}
     {% else %}
     <form action="" method="post">
         {% csrf_token %}
-        {{form.as_table}}
-        <button class="btn btn-secondary">Guardar</button>
+        {{ form | crispy }}
+        <button class="btn btn-secondary"><i class="bi bi-floppy"></i> Guardar</button>
         {% endif %}
-        <a href="descargar/sectores" method="POST" class="btn btn-dark ">Descargar</a>
+        <a href="descargar/sectores" method="POST" class="btn btn-dark ">
+            <i class="bi bi-cloud-download"></i> Descargar
+        </a>
     </form>
     {% endif %}
     {% endif %}
     {{error}}
+    <br>
     <hr size="5" color="grey" noshade>
     <table class="table table-striped">
         <thead>

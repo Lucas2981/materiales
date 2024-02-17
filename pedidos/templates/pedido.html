@@ -10,10 +10,13 @@
                 <form method="get">
                     <div id="custom-search-input">
                         <div class="input-group col-md-12">
-                            <input type="text" class="form-control" placeholder="Buscar..." name="buscar" value="{{ request.GET.buscar }}">
+                            <input type="text" class="form-control" placeholder="Ingrese palabras clave..." name="buscar"
+                                value="{{ request.GET.buscar }}">
                             <span class="input-group-list">
                                 <i class="icon icon-search"></i>
-                                <button type="submit" class="btn btn-success">Buscar</button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-search"></i> Buscar
+                                </button>
                             </span>
                         </div>
 
@@ -42,7 +45,8 @@
                     <td>{{pedido.obra.get_area_display}}</td>
                     <td>{{pedido.obra}}</td>
                     <td>{% if pedido.a_proveedor == True %}✅{% else %}⌛{% endif %}</td>
-                    <td>{% if pedido.orden_compra == null %} Sin asignar{% else %}{{pedido.orden_compra}}{% endif %}</td>
+                    <td>{% if pedido.orden_compra == null %} Sin asignar{% else %}{{pedido.orden_compra}}{% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -2,4 +2,6 @@ db.sqlite3
 venv
 .vscode
 database.json
+pruebas.py
+pedido.xlsx
 __pycache__
