@@ -11,14 +11,65 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
-
 def index(request):
     saludo = 'Portal de Pedidos'
     creador = 'Lucas L.'
+    if (request.user.groups.filter(name__in=['Tecnicos','Lucas']).exists()):
+        pedidos = Pedido.objects.filter(user=request.user)
+        cant_pedidos = len(pedidos)
+        pedidos_aprobados = len(pedidos.filter(validated=True))
+        pedidos_pendientes = len(pedidos.filter(validated=False))
+        pedidos_comprados = len(pedidos.filter(a_proveedor=True))
+        pedidos_no_comprados = len(pedidos.filter(a_proveedor=False))
+        porc_no_comprados = round((pedidos_no_comprados / pedidos_aprobados)*100,1)
+        porc_comprados = round((pedidos_comprados / pedidos_aprobados)*100,1)
+        porc_aprobados = round((pedidos_aprobados / cant_pedidos)*100,1)
+        porc_pendientes = round((pedidos_pendientes / cant_pedidos)*100,1)
+        return render(request, 'index.html', {
+            'titulo': saludo,
+            'creador': creador,
+            'cant_pedidos': cant_pedidos,
+            'pedidos_aprobados': pedidos_aprobados,
+            'pedidos_pendientes': pedidos_pendientes,
+            'porc_aprobados': porc_aprobados,
+            'porc_pendientes': porc_pendientes,
+            'porc_comprados': porc_comprados,
+            'pedidos_comprados': pedidos_comprados,
+            'pedidos_no_comprados': pedidos_no_comprados,
+            'porc_no_comprados': porc_no_comprados
+        })
+    elif (request.user.groups.filter(name__in=['Compras','Directores']).exists()):
+        pedidos = Pedido.objects.all()
+        cant_pedidos = len(pedidos)
+
+        pedidos_aprobados = len(pedidos.filter(validated=True))
+        pedidos_pendientes = len(pedidos.filter(validated=False))
+        porc_aprobados = round((pedidos_aprobados / cant_pedidos)*100,1)
+        porc_pendientes = round((pedidos_pendientes / cant_pedidos)*100,1)
+
+        pedidos_comprados = len(pedidos.filter(a_proveedor=True))
+        pedidos_no_comprados = len(pedidos.filter(a_proveedor=False, validated=True))
+        porc_comprados = round((pedidos_comprados / pedidos_aprobados)*100,1)
+        porc_no_comprados = round((pedidos_no_comprados / pedidos_aprobados)*100,1)
+        
+        return render(request, 'index.html', {
+            'titulo': saludo,
+            'creador': creador,
+            'cant_pedidos': cant_pedidos,
+            'pedidos_aprobados': pedidos_aprobados,
+            'pedidos_pendientes': pedidos_pendientes,
+            'porc_aprobados': porc_aprobados,
+            'porc_pendientes': porc_pendientes,
+            'porc_comprados': porc_comprados,
+            'pedidos_comprados': pedidos_comprados,
+            'pedidos_no_comprados': pedidos_no_comprados,
+            'porc_no_comprados': porc_no_comprados
+        })
     return render(request, 'index.html', {
-        'titulo': saludo,
-        'creador': creador
-    })
+            'titulo': saludo,
+            'creador': creador,
+        })
+
 @login_required
 def obra(request):
     # obras = Obra.objects.all()

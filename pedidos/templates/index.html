@@ -3,49 +3,17 @@
 <section class="container">
     {% if request.user.is_authenticated %}
     <h1 class="display-1 text-center py-5">{{ titulo }}</h1>
-    <br>
-    <div id="carouselExampleIndicators" class="carousel slide py-3">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
-                aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                aria-label="Slide 3"></button>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active" style="max-height: 450px;">
-                <img src="https://www.argentina.gob.ar/sites/default/files/whatsapp_image_2023-06-02_at_12.22.14.jpeg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" style="max-height: 450px;">
-                <img src="https://www.construar.com.ar/wp-content/uploads/2020/06/plan-belgrano-catamarca.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item" style="max-height: 450px;">
-                <img src="https://elconstructor.com/wp-content/uploads/2021/09/Obras-Catamarca.jpg" class="d-block w-100" alt="...">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-            data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
     <div class="card border-0 py-5">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <div class="card-body ">
                     <h5 class="card-title">Hola {% if user.first_name == '' %} {{user.username}} {% else %}
                         {{user.first_name | upper}} {% endif %}!</h5>
                     <p class="card-text">Bienvenido a la aplicación web para solicitud de pedidos de materiales del
-                        ministerio de obras publicas. Esta web es para uso exclusivo del personal autorizado por el
-                        ministerio. Aquí podrá gestionar sus solicitudes de forma rápida, fácil y segura. Podrá
-                        consultar el estado de sus pedidos y el historial de sus operaciones. También podrá
-                        comunicarse con el equipo técnico en caso de tener alguna duda o problema. Esperamos que
+                        Ministerio de Infraestructura y Obras Civiles. Esta web es para uso exclusivo del personal
+                        autorizado por el ministerio. Aquí podrá gestionar sus solicitudes de forma rápida, fácil y
+                        segura. Podrá consultar el estado de sus pedidos y el historial de sus operaciones. También
+                        podrá comunicarse con el equipo técnico en caso de tener alguna duda o problema. Esperamos que
                         esta aplicación sea de gran utilidad y que ayude a optimizar tu trabajo.</p>
                     <p class="card-text"><small class="text-body-secondary"><i>Consultas por WhatsApp <a target="_blank"
                                     class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
@@ -53,13 +21,106 @@
                     </p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <img src="https://www.argentina.gob.ar/sites/default/files/portezuelo-turismo-ccabrera.jpg"
-                    class="img-fluid rounded-5" alt="...">
+            {% if perms.pedidos.view_material %}
+            <div class="col-md-6 text-end">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ cant_pedidos }}</div>
+                                <p class="lead">Pedidos de Materiales</p>
+                                <p class="text-muted">+11,06% vs mes anterior</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <p class="lead">Pedidos Autorizados</p>
+                                <p class="text-muted">{{ porc_aprobados }}% autorizado</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }}</div>
+                                <p class="lead">Pedidos comprados</p>
+                                <p class="text-muted">{{ porc_comprados }}% resuelto</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            {% elif perms.pedidos.add_material %}
+            <div class="col-md-6 text-end">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <p class="lead">Pedidos de Materiales</p>
+                                <p class="text-muted">+11,06% vs mes anterior</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }}</div>
+                                <p class="lead">Pedidos Comprados</p>
+                                <p class="text-muted">{{ porc_comprados }}% a proveedor</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-danger">{{ pedidos_no_comprados }}</div>
+                                <p class="lead">Pedidos Pendientes</p>
+                                <p class="text-muted">{{ porc_no_comprados }}% en mora</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif perms.pedidos.add_sector %}
+            <div class="col-md-6 text-end">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ cant_pedidos }}</div>
+                                <p class="lead">Pedidos de Materiales</p>
+                                <p class="text-muted">+11,06% </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <p class="lead">Pedidos Aprobados</p>
+                                <p class="text-muted">{{ porc_aprobados }}% a compra</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row numbers">
+                            <div class="col">
+                                <div class="h1 fw-bold text-danger">{{ pedidos_pendientes }}</div>
+                                <p class="lead">Pedidos Pendientes</p>
+                                <p class="text-muted">{{ porc_pendientes }}% sin resolver</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
-    </div>
+
     {% else %}
     <h1 class="display-1 text-center py-5">Uso restringido a personal autorizado ⚠️</h1>
     {% endif %}

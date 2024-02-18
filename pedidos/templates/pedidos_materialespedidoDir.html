@@ -6,21 +6,21 @@
     <h1 class="display-1 text-center">Detalle del Pedido</h1>
     <br>
     <div class="row">
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-9">
             <h4>Obra: {{ obra_name }}</h4>
             <h6>Pedido: {{ cod_pedido }}</h6>
             <h6>Ubicacion: {{ ubicacion }}</h6>
             <h6>Memoria:</h6>
             {% if memoria == '' %}
+            Sin especificar
+            {% else %}
             <div class="card container">
-                S/D
-                {% else %}
                 {{ memoria }}
-                {% endif %}
             </div>
+            {% endif %}
             <br>
         </div>
-        <div class="col-12 col-lg-6">
+        <div class="col-12 col-lg-3">
             {% if request.method == 'GET' %}
             {% if perms.pedidos.add_sector %}
             {% if a_proveedor %}
@@ -30,9 +30,9 @@
                     {% csrf_token %}
                     {{ form | crispy }}
                     <button class="btn btn-success"><i class="bi bi-upload"></i> Guardar</button>
+                    {% endif %}
+                </form>
             </div>
-            {% endif %}
-            </form>
             {% endif %}
             {% endif %}
         </div>
