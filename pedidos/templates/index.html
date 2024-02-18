@@ -21,13 +21,14 @@
                     </p>
                 </div>
             </div>
+            <!-- metricas tecnicos -->
             {% if perms.pedidos.view_material %}
             <div class="col-md-6 text-end">
                 <div class="row">
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ cant_pedidos }}</div>
+                                <div class="h1 fw-bold text-secondary">{{ cant_pedidos }} <i class="bi bi-send-arrow-up-fill"></i></div>
                                 <p class="lead">Pedidos de Materiales</p>
                                 <p class="text-muted">+11,06% vs mes anterior</p>
                             </div>
@@ -36,7 +37,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <div class="h1 fw-bold text-warning">{{ pedidos_aprobados }} <i class="bi bi-clipboard-check"></i></div>
                                 <p class="lead">Pedidos Autorizados</p>
                                 <p class="text-muted">{{ porc_aprobados }}% autorizado</p>
                             </div>
@@ -45,7 +46,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }}</div>
+                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }} <i class="bi bi-cart-plus-fill"></i></div>
                                 <p class="lead">Pedidos comprados</p>
                                 <p class="text-muted">{{ porc_comprados }}% resuelto</p>
                             </div>
@@ -53,13 +54,14 @@
                     </div>
                 </div>
             </div>
+            <!-- Metricas compras -->
             {% elif perms.pedidos.add_material %}
             <div class="col-md-6 text-end">
                 <div class="row">
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <div class="h1 fw-bold text-secondary">{{ pedidos_aprobados }} <i class="bi bi-cart-fill"></i></div>
                                 <p class="lead">Pedidos de Materiales</p>
                                 <p class="text-muted">+11,06% vs mes anterior</p>
                             </div>
@@ -68,7 +70,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }}</div>
+                                <div class="h1 fw-bold text-success">{{ pedidos_comprados }} <i class="bi bi-cart-check-fill"></i></div>
                                 <p class="lead">Pedidos Comprados</p>
                                 <p class="text-muted">{{ porc_comprados }}% a proveedor</p>
                             </div>
@@ -77,7 +79,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-danger">{{ pedidos_no_comprados }}</div>
+                                <div class="h1 fw-bold text-danger">{{ pedidos_no_comprados }} <i class="bi bi-cart-x-fill"></i></div>
                                 <p class="lead">Pedidos Pendientes</p>
                                 <p class="text-muted">{{ porc_no_comprados }}% en mora</p>
                             </div>
@@ -85,13 +87,14 @@
                     </div>
                 </div>
             </div>
+            <!-- Metricas directores -->
             {% elif perms.pedidos.add_sector %}
             <div class="col-md-6 text-end">
                 <div class="row">
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ cant_pedidos }}</div>
+                                <div class="h1 fw-bold text-secondary">{{ cant_pedidos }} <i class="bi bi-check2"></i></div>
                                 <p class="lead">Pedidos de Materiales</p>
                                 <p class="text-muted">+11,06% </p>
                             </div>
@@ -100,7 +103,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }}</div>
+                                <div class="h1 fw-bold text-success">{{ pedidos_aprobados }} <i class="bi bi-check2-all"></i></div>
                                 <p class="lead">Pedidos Aprobados</p>
                                 <p class="text-muted">{{ porc_aprobados }}% a compra</p>
                             </div>
@@ -109,7 +112,7 @@
                     <div class="col-4">
                         <div class="row numbers">
                             <div class="col">
-                                <div class="h1 fw-bold text-danger">{{ pedidos_pendientes }}</div>
+                                <div class="h1 fw-bold text-danger">{{ pedidos_pendientes }} <i class="bi bi-clock-history"></i></div>
                                 <p class="lead">Pedidos Pendientes</p>
                                 <p class="text-muted">{{ porc_pendientes }}% sin resolver</p>
                             </div>
