@@ -48,7 +48,7 @@ class Rubros(models.Model):
         ordering = ['name']
     def __str__(self):
         return self.name
-class Material(models.Model): # Habilidades
+class Material(models.Model): 
     name = models.CharField(max_length=150, verbose_name='Material', unique=True)
     unidad = models.CharField(max_length=20, verbose_name='Unidad')
     referencia = models.CharField(max_length=150, blank=True, null=True, verbose_name='Referencia')

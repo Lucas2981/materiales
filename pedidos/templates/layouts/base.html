@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark pt-5" style="background-color: #0C4B33;">
+    <nav class="navbar navbar-expand-md navbar-dark pt-5" style="background-color: #2473ba;">
 
         <div class="container">
             <a class="navbar-brand" href="/"><i class="bi bi-house"></i> Inicio</a>
@@ -35,7 +35,7 @@
                     {% endif %}
                     {% if perms.pedidos.view_material %}
                     <li class="nav-item">
-                        <a href='/admin' class="nav-link"><i class="bi bi-shop"></i> Técnicos</a>
+                        <a href='/admin' class="nav-link"><i class="bi bi-pen"></i> Técnicos</a>
                     </li>
                     {% endif %}
                     <li class="nav-item">
@@ -43,7 +43,7 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a href={% url 'signin' %} class="nav-link">Inicia sesión</a>
+                        <a href={% url 'signin' %} class="nav-link"><i class="bi bi-door-open"></i> Inicia sesión</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -51,7 +51,7 @@
         </div>
     </nav>
     <div class="row">
-        <div class="col pt-2" style="background-color: #44B78B;">
+        <div class="col pt-2" style="background-color: #65a8a4;">
 
         </div>
     </div>
