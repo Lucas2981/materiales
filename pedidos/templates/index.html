@@ -62,8 +62,8 @@
                         <div class="row numbers">
                             <div class="col">
                                 <div class="h1 fw-bold text-secondary">{{ pedidos_aprobados }} <i class="bi bi-cart-fill"></i></div>
-                                <p class="lead">Pedidos de Materiales</p>
-                                <p class="text-muted">+11,06% vs mes anterior</p>
+                                <p class="lead">Pedidos Solicitados</p>
+                                <p class="text-muted">{{ var_pedido }}% vs mes anterior</p>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                         <div class="row numbers">
                             <div class="col">
                                 <div class="h1 fw-bold text-success">{{ pedidos_comprados }} <i class="bi bi-cart-check-fill"></i></div>
-                                <p class="lead">Pedidos Comprados</p>
+                                <p class="lead">Pedidos Gestionados</p>
                                 <p class="text-muted">{{ porc_comprados }}% a proveedor</p>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                             <div class="col">
                                 <div class="h1 fw-bold text-secondary">{{ cant_pedidos }} <i class="bi bi-check2"></i></div>
                                 <p class="lead">Pedidos de Materiales</p>
-                                <p class="text-muted">+11,06% </p>
+                                <p class="text-muted">{{ var_pedido }}% vs mes anterior</p>
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                         <div class="row numbers">
                             <div class="col">
                                 <div class="h1 fw-bold text-success">{{ pedidos_aprobados }} <i class="bi bi-check2-all"></i></div>
-                                <p class="lead">Pedidos Aprobados</p>
+                                <p class="lead">Pedidos Autorizados</p>
                                 <p class="text-muted">{{ porc_aprobados }}% a compra</p>
                             </div>
                         </div>
