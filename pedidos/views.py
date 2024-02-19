@@ -45,20 +45,21 @@ def index(request):
             'porc_no_comprados': porc_no_comprados
         })
     elif (request.user.groups.filter(name__in=['Compras','Directores']).exists()):
-        pedidos = Pedido.objects.all().order_by('materialespedido__pedido__created')
-
-        pedidos_mes = pedidos.values('materialespedido__pedido__id','materialespedido__pedido__created','materialespedido__pedido__validated','materialespedido__pedido__a_proveedor')
+        pedidos = Pedido.objects.all().order_by('created')
+        pedidos_mes = pedidos.values('id','created','validated','a_proveedor')
         pedidos_mes = list(pedidos_mes)
         df = pd.DataFrame(pedidos_mes)
-        pedidos_mes_group = df.groupby([pd.Grouper(key='materialespedido__pedido__created', freq='ME')]).agg({'materialespedido__pedido__id': 'count','materialespedido__pedido__validated': 'sum', 'materialespedido__pedido__a_proveedor': 'sum'})
-        pedidos_mes_group['var_mens_ped'] = round(pedidos_mes_group['materialespedido__pedido__id'].pct_change()*100,1)
-        var_pedido=pedidos_mes_group.at[pedidos_mes_group.index[0], 'var_mens_ped']
-        cant_pedidos = len(pedidos)
+        pedidos_mes_group = df.groupby([pd.Grouper(key='created', freq='ME')]).agg({'id': 'count','validated': 'sum', 'a_proveedor': 'sum'})
+        
+        pedidos_mes_group['var_mens_ped'] = round(pedidos_mes_group['id'].pct_change()*100,1)
+        var_pedido = pedidos_mes_group.at[pedidos_mes_group.index[0], 'var_mens_ped']
 
         pedidos_aprobados = len(pedidos.filter(validated=True))
         pedidos_pendientes = len(pedidos.filter(validated=False))
         pedidos_comprados = len(pedidos.filter(a_proveedor=True))
         pedidos_no_comprados = len(pedidos.filter(a_proveedor=False, validated=True))
+
+        cant_pedidos = pedidos_aprobados + pedidos_pendientes
 
         try:
             porc_aprobados = round((pedidos_aprobados / cant_pedidos)*100,1)
