@@ -8,8 +8,8 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.http import HttpResponse
 import pandas as pd
-from openpyxl import Workbook
-from openpyxl.styles import Alignment
+# from openpyxl import Workbook
+# from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
 
 def index(request):
     saludo = 'Portal de Pedidos'
@@ -221,18 +221,59 @@ def generar_archivo_xls(request,pedido_id):
     try:
         pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
         # Agrupar los pedidos por obra y material
-        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__material__rubro__name',).annotate(cantidad=Sum('materialespedido__cantidad'))
+        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__obra__area','materialespedido__pedido__user__username','materialespedido__pedido__created','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__material__rubro__name',).annotate(cantidad=Sum('materialespedido__cantidad'))
         # Convertir el resultado a una lista
         pedidos_materialespedido = list(pedidos_agrupados)
         pedidos_df = pd.DataFrame(pedidos_materialespedido)
         cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
+        
+        area = pedidos_materialespedido[0]['materialespedido__pedido__obra__area']
+        if area == 0:
+            area = 'DIRECCION PROVINCIAL DE INFRAESTRUCTURA ESCOLAR'
+        elif area == 1:
+            area = 'Consultar el nombre de esta dirección'
+        elif area == 2:
+            area = 'DIRECCION DE INTENDENCIA DEL CENTRO ADMINISTRATIVO PODER ADMINISTRATIVO'
+        else:
+            area = 'DIRECCION PROVINCIAL DE INFRAESTRUCTURA DE SALUD'
+        fecha = pedidos_materialespedido[0]['materialespedido__pedido__created']
         df = pedidos_df.rename(columns={'materialespedido__pedido__obra__name':'Obra','materialespedido__pedido':'Pedido N°','materialespedido__material__name':'Descripción','materialespedido__material__unidad':'Unidad de medida','cantidad':'Cantidad','materialespedido__material__rubro__name':'Observaciones'})
         df = df[['Descripción','Unidad de medida','Cantidad','Observaciones']]
         df = df.sort_values(['Observaciones','Descripción'])
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="Pedido {pedidos_df["materialespedido__pedido__obra__name"][0].title()}.xlsx"'
+        
+        a1 = "Gobierno de la Provincia de Catamarca"
+        a2 = "Ministerio de Infraestructura y Obras Civiles"
+        a3 = "SOLICITUD DE MATERIALES"
+        a5 = f'Area solicitante: {area.title()}'
+        a6 = f'Destino: {pedidos_df["materialespedido__pedido__obra__name"][0].title()}'
+        a7 = 'Proveedor: '
+        d1 = "Nota N°: "
+        d2 = f"Fecha: {fecha.day}/{fecha.month}/{fecha.year}"
+
         writer = pd.ExcelWriter(response)
-        df.to_excel(writer, sheet_name=cod_pedido, index=False)
+        workbook = writer.book
+        # Nombre de la hoja
+        worksheet = workbook.add_worksheet(cod_pedido)
+        # formato de la hoja
+        titulo_1 = writer.book.add_format({'bold': True, 'font_size': 15})
+        titulo_2 = writer.book.add_format({'bold': True, 'font_size': 12})
+        titulo_3 = writer.book.add_format({'bold': True, 'font_size': 11})
+        # escribir en la hoja
+        worksheet.write(0, 0, a1, titulo_1)
+        worksheet.write(1, 0, a2,titulo_2)
+        worksheet.write(2, 0, a3,titulo_3)
+        worksheet.write(3, 0, "")
+        worksheet.write(4, 0, a5,titulo_3)
+        worksheet.write(5, 0, a6,titulo_3)
+        worksheet.write(6, 0, a7,titulo_3)
+        worksheet.write(7, 0, '')
+        worksheet.write(0, 3, d1,titulo_3)
+        worksheet.write(1, 3, d2,titulo_3)
+        # incluir la consulta en la hoja
+        df.to_excel(writer, sheet_name=cod_pedido, startrow=8, index=False)
+        # ajustar el ancho de las columnas
         for column in df:
             column_width = max(df[column].astype(str).map(len).max(), len(column))
             col_idx = df.columns.get_loc(column)
@@ -246,19 +287,58 @@ def generar_archivo_xlsDir(request,pedido_id):
     try:
         pedidos_materiales = Pedido.objects.filter(pk=pedido_id)
         # Agrupar los pedidos por obra y material
-        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad'))
+        pedidos_agrupados = pedidos_materiales.values('materialespedido__pedido__obra__name','materialespedido__pedido__obra__area','materialespedido__pedido__created','materialespedido__pedido__user__username','materialespedido__pedido','materialespedido__material__name','materialespedido__material__unidad','materialespedido__sector__name').annotate(cantidad=Sum('materialespedido__cantidad'))
         # Convertir el resultado a una lista
         pedidos_materialespedido = list(pedidos_agrupados)
         pedidos_df = pd.DataFrame(pedidos_materialespedido)
         cod_pedido = 'P'+str(pedidos_materialespedido[0]['materialespedido__pedido'])+pedidos_materialespedido[0]['materialespedido__pedido__user__username'][:4].upper()
+        area = pedidos_materialespedido[0]['materialespedido__pedido__obra__area']
+        if area == 0:
+            area = 'DIRECCION PROVINCIAL DE INFRAESTRUCTURA ESCOLAR'
+        elif area == 1:
+            area = 'Consultar el nombre de esta dirección'
+        elif area == 2:
+            area = 'DIRECCION DE INTENDENCIA DEL CENTRO ADMINISTRATIVO PODER ADMINISTRATIVO'
+        else:
+            area = 'DIRECCION PROVINCIAL DE INFRAESTRUCTURA DE SALUD'
+        fecha = pedidos_materialespedido[0]['materialespedido__pedido__created']
         df = pedidos_df.rename(columns={'materialespedido__pedido__obra__name':'Obra','materialespedido__pedido':'Pedido N°','materialespedido__material__name':'Material','materialespedido__material__unidad':'Unidad','cantidad':'Cant. Solicitada','materialespedido__sector__name':'Sector'})
         # df = df['Pedido N°'] == pk
         df = df[['Sector','Material','Unidad','Cant. Solicitada']]
         df = df.sort_values(['Sector','Material'])
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = f'attachment; filename="pedido_{pedidos_df["materialespedido__pedido__obra__name"][0]}.xlsx"'
+        
+        a1 = "Gobierno de la Provincia de Catamarca"
+        a2 = "Ministerio de Infraestructura y Obras Civiles"
+        a3 = "SOLICITUD DE MATERIALES"
+        a5 = f'Area solicitante: {area.title()}'
+        a6 = f'Destino: {pedidos_df["materialespedido__pedido__obra__name"][0].title()}'
+        a7 = 'Proveedor: '
+        d1 = "Nota N°: "
+        d2 = f"Fecha: {fecha.day}/{fecha.month}/{fecha.year}"
+
         writer = pd.ExcelWriter(response)
-        df.to_excel(writer, sheet_name=cod_pedido, index=False)
+        workbook = writer.book
+        # Nombre de la hoja
+        worksheet = workbook.add_worksheet(cod_pedido)
+        # formato de la hoja
+        titulo_1 = writer.book.add_format({'bold': True, 'font_size': 15})
+        titulo_2 = writer.book.add_format({'bold': True, 'font_size': 12})
+        titulo_3 = writer.book.add_format({'bold': True, 'font_size': 11})
+        # escribir en la hoja
+        worksheet.write(0, 0, a1, titulo_1)
+        worksheet.write(1, 0, a2,titulo_2)
+        worksheet.write(2, 0, a3,titulo_3)
+        worksheet.write(3, 0, "")
+        worksheet.write(4, 0, a5,titulo_3)
+        worksheet.write(5, 0, a6,titulo_3)
+        worksheet.write(6, 0, a7,titulo_3)
+        worksheet.write(7, 0, '')
+        worksheet.write(0, 3, d1,titulo_3)
+        worksheet.write(1, 3, d2,titulo_3)
+        # incluir la consulta en la hoja
+        df.to_excel(writer, sheet_name=cod_pedido, startrow=8, index=False)
         for column in df:
             column_width = max(df[column].astype(str).map(len).max(), len(column))
             col_idx = df.columns.get_loc(column)
