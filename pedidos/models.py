@@ -90,7 +90,7 @@ class Pedido(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
     problema = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Planteo de problema', help_text='En este campo, debes explicar brevemente el problema que quieres resolver.')
     propuesta = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Propuesta de solución', help_text='En este campo, debes explicar brevemente la solución que quieres implementar.')
-    memoria = models.TextField(max_length=3000, blank=True,null=True,verbose_name='Memoria', help_text='Generado por IA...')
+    memoria = models.TextField(max_length=3000, blank=True,null=True,verbose_name='Memoria', help_text='Generado por IA...', default="")
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
     validated = models.BooleanField(default=False, verbose_name='Autorizado')
     a_proveedor = models.BooleanField(default=False, verbose_name='A Proveedor')
@@ -112,7 +112,7 @@ class Pedido(models.Model):
         return f'P{str(self.id)}{user_id} - {self.obra.name}'
     
     def save(self):
-        if self.problema != "" and self.propuesta != "":
+        if self.problema and self.propuesta:
             genai.configure(api_key=token)
             model = genai.GenerativeModel(model_name="gemini-pro")
 
