@@ -2,7 +2,7 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from django.contrib.auth.decorators import  user_passes_test
 from django.contrib import admin
-from .models import Obra, Sector, Material, Pedido,MaterialesPedido, Rubros
+from .models import Obra,Obra2 ,Sector, Material, Pedido,MaterialesPedido, Rubros
 
 class MaterialPedidoInline(admin.TabularInline):
     model = MaterialesPedido
@@ -35,16 +35,16 @@ class PedidoAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if request.user.groups.filter(name='Directores').exists():
             if obj and obj.a_proveedor: # Si el pedido ya ha sido enviado a proveedor no se puede modificar en direcciones
-                return ['obra','memoria','user','validated','a_proveedor','orden_compra']
+                return ['obra','memoria','problema','propuesta','user','validated','a_proveedor','orden_compra']
             else:
-                return ['obra','memoria','user','created', 'a_proveedor','orden_compra'] # Solo el campo 'validated' puede ser modificado
+                return ['obra','memoria','problema','propuesta','user','created', 'a_proveedor','orden_compra'] # Solo el campo 'validated' puede ser modificado
         elif request.user.groups.filter(name='Compras').exists():
             if obj and obj.validated: # Si el pedido ya ha sido validado no se puede modificar
-                return ['obra','memoria','user','validated','created'] 
+                return ['obra','memoria','problema','propuesta','user','validated','created'] 
         else:
             if obj and obj.validated: # Si el pedido ya ha sido validado no se puede modificar
-                return ['obra','memoria','user','validated','created','a_proveedor','orden_compra'] 
-            return ['validated','user','a_proveedor','orden_compra']  # Si no hay pedidos validados, Los campos 'validated' y 'user' serán de solo lectura
+                return ['obra','memoria','problema','propuesta','user','validated','created','a_proveedor','orden_compra'] 
+            return ['validated','problema','propuesta','memoria','user','a_proveedor','orden_compra']  # Si no hay pedidos validados, Los campos 'validated' y 'user' serán de solo lectura
     def get_queryset(self, request): # filtramos el queryset para que solo aparezcan las obras del usuario que ha iniciado sesion
         queryset = super().get_queryset(request)
         if request.user.is_authenticated:
@@ -83,5 +83,18 @@ class RubrosExport(resources.ModelResource):
         fields = ('id','name','referencia')
         model = Rubros
 admin.site.register(Rubros,RubrosAdmin)
+
+class Obra2Admin(admin.ModelAdmin):
+    list_display = ('codObra','name','inspector','inicio','plazo','entrega','finalizada','fecha_finalizada')
+    search_fields = ('name','inspector__username')
+    list_filter = ('finalizada','inspector__username')
+    raw_id_fields = ['inspector','name']
+    def get_readonly_fields(self, request, obj=None):
+        return ['codObra','entrega','fecha_finalizada']
+    def save_model(self, request, obj, form, change): # Asignamos el usuario que ha iniciado sesion
+        if not obj.inspector:
+            obj.inspector = request.user
+        obj.save()
+admin.site.register(Obra2,Obra2Admin)
 
 admin.site.register(Sector)

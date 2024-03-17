@@ -2,7 +2,7 @@
 {% block content %}
 
 <main class="container py-5">
-    <h1 class="display-1 text-center">Dirección de Compras</h1>
+    <h1 class="display-1 text-center">Informes y memorias</h1>
     <br>
     <div class="container">
         <div class="row">
@@ -33,26 +33,26 @@
                 <th>Cod. Pedido</th>
                 <th>Área</th>
                 <th>Obra</th>
-                <th>A proveedor</th>
-                <th>Orden de compra</th>
+                <th>Problema</th>
+                <th>Solución</th>
+                <th>Memoria</th>
             </thead>
             <tbody>
-                {% for pedido in pedidos %}
+                {% for lista in lista_memoria %}
                 <tr>
                     <td><input type="checkbox" name="pedidos[]" value="{{ pedido.pk }}"></td>
-                    <td><a href="{% url 'pedidos_detalle' pedido.id %}"
-                            class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{pedido.codigo_pedido}}</a>
+                    <td>{{lista.codigo_pedido}}</a>
                     </td>
-                    <td>{{pedido.obra.get_area_display}}</td>
-                    <td>{{pedido.obra}}</td>
-                    <td>{% if pedido.a_proveedor == True %}✅{% else %}⌛{% endif %}</td>
-                    <td>{% if pedido.orden_compra == null %} Sin asignar{% else %}{{pedido.orden_compra}}{% endif %}
-                    </td>
+                    <td>{{lista.obra.get_area_display}}</td>
+                    <td><a href= {{lista.id}}
+                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{lista.obra}}</a></td>
+                    <td>{% if lista.problema != '' %}✅{% else %}❌{% endif %}</td>
+                    <td>{% if lista.propuesta != '' %}✅{% else %}❌{% endif %}</td>
+                    <td>{% if lista.memoria != '' %}✅{% else %}❌{% endif %}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </main>
-
 {% endblock %}

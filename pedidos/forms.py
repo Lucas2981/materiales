@@ -18,3 +18,8 @@ class PedidoFormDir(ModelForm):
     class Meta:
         model = Pedido
         fields = ['validated']
+
+class MemoriaForm(ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['problema','propuesta','memoria']

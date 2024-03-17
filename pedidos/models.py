@@ -1,7 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-# from django.contrib.gis.db import models
+from datetime import datetime, timedelta
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
 
+load_dotenv()
+token = os.environ.get('API_TOKEN')
 
 class Obra(models.Model):
     areas_SOP = (('0','Escolar'),('1','Infraestructura'),('2','Intendencia'),('3','Salud'))
@@ -24,12 +29,33 @@ class Obra(models.Model):
     periodo_func = models.CharField(max_length=150, blank=True, null=True, verbose_name='Periodo de Funcionamiento')
     geometry = models.CharField(max_length=150, blank=True, null=True, verbose_name='Georeferencia')
     class Meta:
-        verbose_name = 'obra'
-        verbose_name_plural = 'obras'
+        verbose_name = 'institución'
+        verbose_name_plural = 'Intituciones'
         ordering = ['name']
     def __str__(self):
         return self.name
 
+class Obra2(models.Model):
+    name = models.ForeignKey(Obra, on_delete=models.CASCADE, verbose_name='Obra')
+    codObra = models.CharField(max_length=200, verbose_name='Cod. Obra', blank=True, null=True)
+    inspector = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Inspector')
+    inicio = models.DateField(verbose_name='Fecha de inicio')
+    plazo = models.IntegerField(verbose_name='Plazo')
+    entrega = models.DateField(verbose_name='Fecha de entrega estimada', blank=True, null=True)
+    finalizada = models.BooleanField(verbose_name='Finalizada', default=False)
+    fecha_finalizada = models.DateField(verbose_name='Fecha de finalización real', blank=True, null=True)
+    class Meta:
+        verbose_name = 'obra2'
+        verbose_name_plural = 'obras2'
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name.name
+    
+    def save(self, *args, **kwargs):
+        self.codObra = f'{str(self.name.name)[:4].upper()}{str(self.id).zfill(4)}{str(self.name.dpto)[:3].upper()}'
+        self.entrega = self.inicio + timedelta(days=self.plazo)
+        super().save(*args, **kwargs)
 class Sector(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Sector')
     class Meta:
@@ -62,7 +88,9 @@ class Material(models.Model):
 class Pedido(models.Model):
     obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
-    memoria = models.TextField(max_length=500, blank=True,null=True, verbose_name='Memoria', help_text='En este campo, debes explicar brevemente el problema que quieres resolver y la solución que propones con los materiales que solicitas. Usa un lenguaje claro, conciso y preciso para expresar tu idea.')
+    problema = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Planteo de problema', help_text='En este campo, debes explicar brevemente el problema que quieres resolver.')
+    propuesta = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Propuesta de solución', help_text='En este campo, debes explicar brevemente la solución que quieres implementar.')
+    memoria = models.TextField(max_length=3000, blank=True,null=True,verbose_name='Memoria', help_text='Generado por IA...')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
     validated = models.BooleanField(default=False, verbose_name='Autorizado')
     a_proveedor = models.BooleanField(default=False, verbose_name='A Proveedor')
@@ -82,6 +110,42 @@ class Pedido(models.Model):
     def __str__(self):
         user_id = str(self.user)[:4].upper()
         return f'P{str(self.id)}{user_id} - {self.obra.name}'
+    
+    def save(self):
+        if self.problema != "" and self.propuesta != "":
+            genai.configure(api_key=token)
+            model = genai.GenerativeModel(model_name="gemini-pro")
+
+            consulta = f'''Objetivo: Generar un informe tecnico del rubro de al construcción ordenado sobre una obra específica, incluyendo su nombre, introducción, problema principal, solución planteada,  desarrollo y conclusión final. No superar los 3000 caracteres.
+
+Nombre de la obra: {self.obra.name.title()}
+Problema: {self.problema}
+Solución planteada: {self.propuesta}
+
+Salida:
+
+Informe:
+
+Nombre de la obra: {self.obra.name.title()}
+
+Introducción:
+Contextualización del tema o ámbito en el que se enmarca la obra, presentación del problema principal que aborda la obra, importancia o relevancia del problema.
+
+Problemática:
+Descripción detallada del problema, incluyendo causas, consecuencias y posibles impactos. Análisis de las diferentes perspectivas o enfoques sobre el problema. Evidencia o datos que sustentan la problemática. Hasta 500 caracteres
+
+Propuesta de intervención:
+Descripción detallada de la solución propuesta para acondicionar la obra, incluyendo fundamentos o argumentos que la sustentan, posibles beneficios o ventajas de la solución y recursos necesarios para su implementación. Hasta 500 caracteres
+
+Conclusión final:
+Resumen de los puntos clave del informe. Reflexión sobre la viabilidad y potencial impacto de la solución propuesta. Aporte o valor de la obra para abordar el problema.
+'''
+            response = model.generate_content(consulta)
+            self.memoria = response.text.replace("**", "")
+        else:
+            self.memoria = ""
+        super().save()
+
 class MaterialesPedido(models.Model): 
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, blank=True, null=True)
     material = models.ForeignKey(Material, on_delete=models.CASCADE, blank=True, null=True)
@@ -94,3 +158,4 @@ class MaterialesPedido(models.Model):
     def __str__(self):
         return self.pedido.obra.name
 
+    

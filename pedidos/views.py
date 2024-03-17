@@ -1,6 +1,6 @@
 from .models import Pedido, Obra
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CrearObra, PedidoForm, PedidoFormDir
+from .forms import CrearObra, PedidoForm, PedidoFormDir, MemoriaForm
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
@@ -119,6 +119,44 @@ def pedidos(request):
             Q(id__icontains=queryset),
             validated=True).distinct().order_by('a_proveedor', 'id')
     return render(request, 'pedido.html', {'pedidos': pedidos, })
+
+login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=['Tecnicos','Lucas']).exists())
+def lista_memorias(request):
+    memorias = Pedido.objects.filter(user=request.user)
+    queryset = request.GET.get('buscar')
+    if queryset:
+        memorias = Pedido.objects.filter(
+            Q(obra__name__icontains=queryset) |
+            Q(user__username__icontains=queryset)|
+            Q(orden_compra__icontains=queryset)|
+            Q(id__icontains=queryset)|
+            Q(memoria__icontains=queryset)|
+            Q(problema__icontains=queryset)|
+            Q(propuesta__icontains=queryset),
+            ).distinct().order_by('validated', 'id')
+    return render(request, 'lista_memoria.html', {'lista_memoria': memorias, })
+
+login_required
+@user_passes_test(lambda u: u.groups.filter(name__in=['Tecnicos','Lucas']).exists())
+def memorias(request, pedido_id):
+    memorias = Pedido.objects.filter(pk=pedido_id)
+    if request.method == 'GET':
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+        form = MemoriaForm(instance=pedido)
+        return render(request, 'memoria.html', {'memoria_detalle': memorias, 'form': form})
+    else:
+        try:
+            pedido = get_object_or_404(Pedido, pk=pedido_id)
+            form = MemoriaForm(request.POST, instance=pedido)
+
+            form.save()
+            return redirect('memoria_detalle', pedido_id=pedido_id)
+        except ValueError:
+            pedido = get_object_or_404(Pedido, pk=pedido_id)
+            form = MemoriaForm(instance=pedido)
+            return render(request, 'memoria.html', {'memoria_detalle': memorias, 'form': form, 'error': 'Error al guardar el pedido'})
+
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name__in=['Directores','Lucas']).exists())
 def pedidosDir(request):
@@ -171,7 +209,6 @@ def pedidos_materialespedido(request, pedido_id):
             'ubicacion': ubicacion,
             'error': 'Cod de pedido ya existe.'
             })
-
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name__in=['Directores','Lucas']).exists())
 def pedidos_materialespedidoDir(request, pedido_id):

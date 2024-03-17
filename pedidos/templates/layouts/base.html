@@ -37,7 +37,10 @@
                     {% endif %}
                     {% if perms.pedidos.view_material %}
                     <li class="nav-item">
-                        <a href='/admin' class="nav-link"><i class="bi bi-pen"></i> Técnicos</a>
+                        <a href='/admin' class="nav-link"><i class="bi bi-pen"></i> Pedidos</a>
+                    </li>
+                    <li>
+                        <a href={% url 'lista_memoria' %} class="nav-link"><i class="bi bi-book"></i> Memorias</a>
                     </li>
                     {% endif %}
                     <li class="nav-item">
@@ -84,6 +87,6 @@
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-<!-- {{ perms.pedidos }} -->
+{{ perms.pedidos }}
 
 </html>

@@ -1,0 +1,25 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<main class="container py-5">
+    <h1 class="display-1 text-center">Pedido de materiales - memoria</h1>
+    <br>
+    <div class="row">
+        {% if request.method == 'GET' %}
+        {% if perms.pedidos.view_pedido %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-success ms-2"><i class="bi bi-magic"></i> Generar memoria y guardar</button>
+            </div>
+        </form>
+        {% endif %}
+        {% endif %}
+    </div>
+    {{ error }}
+    </div>
+</main>
+
+{% endblock %}

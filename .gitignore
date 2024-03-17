@@ -4,4 +4,5 @@ venv
 database.json
 pruebas.py
 pedido.xlsx
+.env
 __pycache__
