@@ -88,9 +88,9 @@ class Material(models.Model):
 class Pedido(models.Model):
     obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Tec asignado', blank=True, null=True)
-    problema = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Planteo de problema', help_text='En este campo, debes explicar brevemente el problema que quieres resolver.')
-    propuesta = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Propuesta de solución', help_text='En este campo, debes explicar brevemente la solución que quieres implementar.')
-    memoria = models.TextField(max_length=3000, blank=True,null=True,verbose_name='Memoria', help_text='Generado por IA...', default="")
+    problema = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Planteo de problema', help_text='Explicar brevemente el problema que quieres resolver.')
+    propuesta = models.TextField(max_length=6000, blank=True,null=True,verbose_name='Propuesta de solución', help_text='Explicar brevemente la solución que quieres implementar.')
+    memoria = models.TextField(max_length=3000, blank=True,null=True,verbose_name='Memoria', help_text='Memoria enriquecida sobre el problema', default="")
     created = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de solicitud')
     validated = models.BooleanField(default=False, verbose_name='Autorizado')
     a_proveedor = models.BooleanField(default=False, verbose_name='A Proveedor')
