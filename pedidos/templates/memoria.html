@@ -3,14 +3,40 @@
 {% load crispy_forms_tags %}
 
 <main class="container py-5">
-    <h1 class="display-1 text-center">Pedido de materiales - memoria</h1>
+    <h1 class="display-1 text-center">Memoria de Obra {{memoria.obra.name}}</h1>
     <br>
     <div class="row">
         {% if request.method == 'GET' %}
         {% if perms.pedidos.view_pedido %}
         <form action="" method="post">
             {% csrf_token %}
-            {{ form | crispy }}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Planteo de problema</label>
+                        <textarea name="problema" class="textarea form-control" rows="3"
+                            placeholder="Explicar brevemente el problema que quieres resolver..."
+                            id={{ form.problema }} </textarea>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Propuesta de solución</label>
+                        <textarea name="propuesta" class="textarea form-control" rows="3"
+                            placeholder="Explicar brevemente la solución que quieres implementar..."
+                            id={{ form.propuesta }} </textarea>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Memoria autogenerada</label>
+                    <textarea name="memoria" class="textarea form-control" rows="3"
+                        placeholder="Memoria enriquecida sobre problemas y soluciones enunciadas..." disabled='' style="height: 780px;"
+                        id={{ form.memoria }} </textarea>
+                </div>
+            </div>
             <div class="d-flex justify-content-end mt-3">
                 <button class="btn btn-success ms-2"><i class="bi bi-magic"></i> Generar memoria y guardar</button>
             </div>
@@ -21,5 +47,4 @@
     {{ error }}
     </div>
 </main>
-
 {% endblock %}
